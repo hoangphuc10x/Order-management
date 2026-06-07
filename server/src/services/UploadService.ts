@@ -1,6 +1,30 @@
 import * as admin from "firebase-admin";
-import * as serviceAccount from "../config/Firebase.json";
 import crypto from "crypto";
+import fs from "fs";
+import path from "path";
+
+// 🔐 Load Firebase service account credentials.
+// In production set FIREBASE_SERVICE_ACCOUNT to the base64-encoded service
+// account JSON (or the raw JSON string). In local dev, falls back to the
+// gitignored server/src/config/Firebase.json file.
+function loadServiceAccount(): admin.ServiceAccount {
+  const fromEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (fromEnv && fromEnv.trim()) {
+    const raw = fromEnv.trim().startsWith("{")
+      ? fromEnv
+      : Buffer.from(fromEnv, "base64").toString("utf8");
+    return JSON.parse(raw) as admin.ServiceAccount;
+  }
+
+  const filePath = path.resolve(__dirname, "../config/Firebase.json");
+  if (fs.existsSync(filePath)) {
+    return JSON.parse(fs.readFileSync(filePath, "utf8")) as admin.ServiceAccount;
+  }
+
+  throw new Error(
+    "Firebase credentials not found. Set FIREBASE_SERVICE_ACCOUNT (base64 service account JSON) or provide server/src/config/Firebase.json."
+  );
+}
 
 export default class UploadService {
   private bucket;
@@ -9,9 +33,7 @@ export default class UploadService {
     // ✅ Khởi tạo Firebase Admin SDK nếu chưa có
     if (!admin.apps.length) {
       admin.initializeApp({
-        credential: admin.credential.cert(
-          serviceAccount as admin.ServiceAccount
-        ),
+        credential: admin.credential.cert(loadServiceAccount()),
         storageBucket: process.env.STORAGE_BUCKET,
       });
     }
