@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Logo from "@/icons/Logo";
 import { Table } from "@/service/tableApi";
 import Loading from "../Loading";
-import { ChevronDown, LayoutGrid, LogOut, UserRound } from "lucide-react";
+import { ChevronDown, LayoutGrid, LogOut, Menu, UserRound } from "lucide-react";
 import { useGetTableOccupiedQuery } from "@/service/kitchenApi";
 import { useEffect, useState } from "react";
 import { socket } from "@/provider/SocketProvider";
@@ -23,7 +23,7 @@ const ROLE_LABELS: Record<string, string> = {
   chef_head: "Bếp trưởng",
 };
 
-const HeadingChef: React.FC<HeadingChefProps> = () => {
+const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userInfo = useUserInfo();
@@ -66,9 +66,18 @@ const HeadingChef: React.FC<HeadingChefProps> = () => {
 
   return (
     <header className="bg-gradient-to-r from-primary-100 to-primary-400 shadow w-screen h-[64px]">
-      <div className="flex items-center gap-4 h-full w-full px-4 sm:px-6">
+      <div className="flex items-center gap-3 h-full w-full px-4 sm:px-6">
+        {/* Toggle danh mục */}
+        <button
+          className="shrink-0 rounded-lg bg-white/20 hover:bg-white/30 text-white p-2 transition-colors"
+          onClick={handleToggleNavbar}
+          aria-label="Mở danh mục"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
         {/* Logo */}
-        <Link to="/chef/confirm-order" className="shrink-0">
+        <Link to="/chef/confirm-order" className="shrink-0 hidden sm:block">
           <Logo fill="white" width="140" height="36" />
         </Link>
 

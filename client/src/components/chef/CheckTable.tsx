@@ -23,7 +23,7 @@ const CheckTable = ({
   });
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center">
-      <div className="bg-white w-[900px] max-w-full h-[579px] shadow-lg overflow-auto mb-[80px] fixed top-0 left-1/2 transform -translate-x-1/2 z-50 mt-10">
+      <div className="bg-white w-[900px] max-w-[95vw] max-w-full h-[579px] shadow-lg overflow-auto mb-[80px] fixed top-0 left-1/2 transform -translate-x-1/2 z-50 mt-10">
         <div className="bg-gradient-to-r from-primary-100 to-primary-400 text-white text-lg font-bold h-[65px] p-4 flex justify-center items-center">
           <p>Các bàn trùng món</p>
         </div>

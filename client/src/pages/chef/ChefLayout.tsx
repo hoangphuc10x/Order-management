@@ -4,7 +4,9 @@ import { Fragment, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 const ChefLayout = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(
+    () => typeof window === "undefined" || window.innerWidth >= 640
+  );
 
   const handleToggleNavbar = () => {
     setIsOpen(!isOpen);
@@ -18,17 +20,25 @@ const ChefLayout = () => {
         <HeadingChef isOpen={isOpen} handleToggleNavbar={handleToggleNavbar} />
       </div>
 
+      {/* Lớp phủ mờ khi mở menu trên mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 top-[64px] bg-black/40 z-30 sm:hidden"
+          onClick={handleToggleNavbar}
+        />
+      )}
+
       <div className="flex">
         <div
-          className={`fixed left-0 top-[64px] h-[calc(100vh-64px)] bg-white shadow-md transition-all duration-200 ease-in-out ${
-            isOpen ? "w-[20%]" : "w-[6%]"
+          className={`fixed left-0 top-[64px] h-[calc(100vh-64px)] bg-white shadow-md z-40 overflow-hidden transition-all duration-200 ease-in-out ${
+            isOpen ? "w-[65%] sm:w-[20%]" : "w-0 sm:w-[6%]"
           }`}
         >
           <NavChef isOpen={isOpen} />
         </div>
         <div
-          className={`ml-auto transition-all duration-300 h-full  mt-[64px] p-4 flex justify-center items-center ${
-            isOpen ? "w-[80%] ml-[20%]" : "w-[94%] ml-[6%]"
+          className={`transition-all duration-300 h-full mt-[64px] p-4 w-full flex justify-center items-center overflow-x-hidden ${
+            isOpen ? "sm:w-[80%] sm:ml-[20%]" : "sm:w-[94%] sm:ml-[6%]"
           }`}
         >
           <Outlet />

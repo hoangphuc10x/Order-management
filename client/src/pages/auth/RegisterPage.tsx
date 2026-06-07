@@ -96,7 +96,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-[496px] absolute top-4 left-32 h-fit">
+    <div className="flex flex-col items-center justify-center absolute h-fit top-4 left-0 w-full px-6 sm:w-[496px] sm:left-32 sm:px-0">
       <p className="text-3xl font-bold mb-12 mt-7 text-white">Đăng Ký</p>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <FormField

@@ -77,7 +77,7 @@ const LoginPage: React.FC = () => {
     }
   }, [isError]);
   return (
-    <div className="flex flex-col items-center justify-center w-[496px] absolute top-14 left-32 h-fit ">
+    <div className="flex flex-col items-center justify-center absolute h-fit top-5 left-0 w-full px-6 sm:w-[496px] sm:left-32 sm:top-14 sm:px-0">
       <p className="text-3xl font-bold mb-12 mt-7 text-white ">Đăng Nhập</p>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         {/* <div className="mb-8 w-full h-14">

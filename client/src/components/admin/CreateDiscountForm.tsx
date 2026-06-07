@@ -68,7 +68,7 @@ const CreateDiscountForm = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center h-screen">
-      <div className="bg-white w-[900px] max-w-full shadow-lg mb-[80px] mt-[91px]">
+      <div className="bg-white w-[900px] max-w-[95vw] max-w-full shadow-lg mb-[80px] mt-[91px]">
         <div className="bg-gradient-to-r from-primary-100 to-primary-400 p-3 flex items-center justify-between">
           <h2 className="text-white text-xl text-center flex-grow">Tạo mã</h2>
         </div>

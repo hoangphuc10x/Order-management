@@ -65,14 +65,14 @@ const CreateDishForm: React.FC<CreateDishFormProps> = ({ setShowForm }) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center h-screen">
-      <div className="bg-white w-[900px] max-w-full shadow-lg mb-[80px] mt-[91px]">
+      <div className="bg-white w-[900px] max-w-[95vw] shadow-lg mb-[80px] mt-[91px] rounded-xl overflow-hidden">
         <div className="bg-gradient-to-r from-primary-100 to-primary-400 p-3 flex items-center justify-between">
           <h2 className="text-white text-xl text-center flex-grow">
             Tạo món ăn
           </h2>
         </div>
 
-        <div className="px-[127px] max-h-[600px] overflow-auto">
+        <div className="px-4 sm:px-12 max-h-[70vh] sm:max-h-[600px] overflow-auto">
           <div className="mt-5">
             <p>Tên món ăn</p>
             <input
@@ -83,18 +83,18 @@ const CreateDishForm: React.FC<CreateDishFormProps> = ({ setShowForm }) => {
               className="w-full p-3 mb-2 border border-black rounded-lg"
             />
 
-            <div className="flex gap-5">
-              <div>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
+              <div className="w-full sm:flex-1">
                 <p>Giá</p>
                 <input
                   type="number"
                   placeholder="Giá"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="w-[305px] p-3 border border-black rounded-lg"
+                  className="w-full p-3 border border-black rounded-lg"
                 />
               </div>
-              <div className="w-[305px] ">
+              <div className="w-full sm:flex-1">
                 <p>Loại món ăn</p>
                 <select
                   className="w-full p-3 mb-2 border border-black rounded-lg"
@@ -118,10 +118,10 @@ const CreateDishForm: React.FC<CreateDishFormProps> = ({ setShowForm }) => {
                   )}
                 </select>
               </div>
-              <div className="ml-[35px]">
+              <div className="w-full sm:flex-1">
                 <p>Độ phức tạp</p>
                 <select
-                  className="w-[305px] p-3 mb-2 border border-black rounded-lg"
+                  className="w-full p-3 mb-2 border border-black rounded-lg"
                   value={difficultyLevel}
                   onChange={(e) => setDifficultyLevel(Number(e.target.value))}
                 >

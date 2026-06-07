@@ -118,7 +118,7 @@ const TableDetail = ({ setSelectedTable, id }: TableDetailProps) => {
                     </TableCell>
                     <TableCell className="text-center text-slate-500 font-normal">
                       <span
-                        className={`text-[2vw] sm:text-xs border-2 px-2 py-1 italic rounded-lg ${
+                        className={`inline-block whitespace-nowrap text-[10px] sm:text-xs border-2 px-2 py-1 italic rounded-lg ${
                           item.status === STATUS.PENDING
                             ? "text-secondary-100"
                             : item.status === STATUS.PROCESSING
