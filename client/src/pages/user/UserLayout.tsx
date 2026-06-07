@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Logo from "@/icons/Logo";
 import { useUserInfo } from "@/hook/auth";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const UserLayout = () => {
   const quantity = useSelector(
@@ -12,6 +14,7 @@ const UserLayout = () => {
   );
   const location = useLocation();
   const { role, _id } = useUserInfo();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -44,10 +47,10 @@ const UserLayout = () => {
             location.pathname === "/" ? "" : "bg-primary-100 shadow-md"
           }`}
         >
-          <Link to="/" className="sm:block hidden z-20">
+          <Link to="/" className="block z-20 shrink-0">
             <Logo
-              className="w-[27vw] lg:w-[10vw] "
-              fill={location.pathname === "/" ? "white" : "white"}
+              className="w-[28vw] sm:w-[20vw] lg:w-[10vw]"
+              fill="white"
             />
           </Link>
 
@@ -56,14 +59,14 @@ const UserLayout = () => {
               to="/"
               className={location.pathname === "/" ? "underline " : ""}
             >
-              Trang chủ
+              {t("nav.home")}
             </Link>
             {(role === "user" || role === "guest") && (
               <Link
                 to="/menu"
                 className={location.pathname === "/menu" ? "underline" : ""}
               >
-                Menu
+                {t("nav.menu")}
               </Link>
             )}
 
@@ -71,49 +74,54 @@ const UserLayout = () => {
               to="/blog"
               className={location.pathname === "/blog" ? "underline" : ""}
             >
-              Diễn đàn
+              {t("nav.blog")}
             </Link>
             {(role === "user" || role === "guest") && (
               <Link
                 to="/ordered"
                 className={location.pathname === "/ordered" ? "underline" : ""}
               >
-                Lịch sử
+                {t("nav.history")}
               </Link>
             )}
           </div>
-          <Link
-            to="/login/admin"
-            className={`absolute right-6 z-20 bg-primary-100 rounded-lg px-2 ${
-              _id ? "hidden" : "block"
-            }`}
-          >
-            Đăng nhập
-          </Link>
-          {role === "manager" && (
-            <Link
-              to="/dashboard"
-              className={`absolute right-6 z-20 bg-primary-100 rounded-lg px-2 `}
-            >
-              Tới trang quản lý
-            </Link>
-          )}
-          {role === "staff" && (
-            <Link
-              to="/staff/show-table"
-              className={`absolute right-6 z-20 bg-primary-100 rounded-lg px-2 `}
-            >
-              Tới trang chính
-            </Link>
-          )}
-          {(role === "chef" || role === "chef_head") && (
-            <Link
-              to="/chef/confirm-order"
-              className={`absolute right-6 z-20 bg-primary-100 rounded-lg px-2 `}
-            >
-              Tới bếp
-            </Link>
-          )}
+
+          {/* Bên phải: đổi ngôn ngữ + nút theo vai trò */}
+          <div className="absolute right-3 z-20 flex items-center gap-2">
+            <LanguageSwitcher variant="light" />
+            {!_id && (
+              <Link
+                to="/login/admin"
+                className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1 text-sm transition-colors whitespace-nowrap"
+              >
+                {t("nav.login")}
+              </Link>
+            )}
+            {role === "manager" && (
+              <Link
+                to="/dashboard"
+                className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1 text-sm transition-colors whitespace-nowrap hidden sm:block"
+              >
+                {t("nav.dashboard")}
+              </Link>
+            )}
+            {role === "staff" && (
+              <Link
+                to="/staff/show-table"
+                className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1 text-sm transition-colors whitespace-nowrap hidden sm:block"
+              >
+                {t("nav.staff")}
+              </Link>
+            )}
+            {(role === "chef" || role === "chef_head") && (
+              <Link
+                to="/chef/confirm-order"
+                className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1 text-sm transition-colors whitespace-nowrap hidden sm:block"
+              >
+                {t("nav.kitchen")}
+              </Link>
+            )}
+          </div>
         </div>
         <div className="flex-1 w-full flex justify-center">
           <Outlet />

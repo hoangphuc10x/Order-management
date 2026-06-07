@@ -56,3 +56,4 @@ public/static/
 *.map
 debug.log
 yarn.lock
+Firebase.json

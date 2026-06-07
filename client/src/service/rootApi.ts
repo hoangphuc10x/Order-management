@@ -55,6 +55,27 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
+// Kiểm tra lỗi có phải do token (hết hạn / không hợp lệ / thiếu) hay không
+const isAuthError = (result: Awaited<ReturnType<typeof baseQuery>>): boolean => {
+  const status = result?.error?.status;
+  const message =
+    ((result?.error?.data as { message?: string } | undefined)?.message || "")
+      .toLowerCase();
+  return (
+    (status === 400 && message.includes("invalid token")) ||
+    (status === 401 && message.includes("token"))
+  );
+};
+
+// Điều hướng về trang đăng nhập phù hợp với vai trò
+const redirectToLogin = (role?: string | null) => {
+  if (typeof window === "undefined") return;
+  if (window.location.pathname.startsWith("/login")) return; // tránh lặp vô hạn
+  // Nhân sự nội bộ -> đăng nhập quản trị; khách/người dùng -> đăng nhập cho khách
+  const isStaff = role === "manager" || role === "staff" || role === "chef" || role === "chef_head";
+  window.location.href = isStaff ? "/login/admin" : "/login";
+};
+
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,
@@ -62,11 +83,12 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  if (result?.error?.status === 400) {
+  if (isAuthError(result)) {
     const refreshToken = (api.getState() as RootState).auth.refreshToken;
     const userInfo = (api.getState() as RootState).auth.userInfo;
+
     if (refreshToken) {
-      const refreshResult = await baseQuery(
+      const refreshResult = (await baseQuery(
         {
           url: "/auth/refresh-token",
           method: "POST",
@@ -74,7 +96,7 @@ const baseQueryWithReauth: BaseQueryFn<
         },
         api,
         extraOptions
-      ) as { data: AuthResponse };
+      )) as { data?: AuthResponse };
 
       const newAccessToken = refreshResult?.data?.accessToken;
       if (newAccessToken) {
@@ -82,14 +104,19 @@ const baseQueryWithReauth: BaseQueryFn<
           login({
             accessToken: newAccessToken,
             refreshToken,
-            userInfo
+            userInfo,
           })
         );
         result = await baseQuery(args, api, extraOptions);
       } else {
-       await api.dispatch(logout());
-       window.location.href = "/";
+        // Refresh thất bại -> đăng xuất và về trang đăng nhập
+        api.dispatch(logout());
+        redirectToLogin(userInfo?.role);
       }
+    } else {
+      // Không có refresh token (token hết hạn / khách chưa đăng nhập)
+      api.dispatch(logout());
+      redirectToLogin();
     }
   }
   return result;

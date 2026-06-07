@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
 import { useUserInfo } from "@/hook/auth";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 interface HeadingChefProps {
   isOpen: boolean;
@@ -27,6 +29,7 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userInfo = useUserInfo();
+  const { t } = useTranslation();
   const { id: activeTableId } = useParams<{ id: string }>();
   const [isDown, setIsDown] = useState(false);
   const { data = { success: false, data: [] }, isLoading, refetch } =
@@ -77,8 +80,8 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
         </button>
 
         {/* Logo */}
-        <Link to="/chef/confirm-order" className="shrink-0 hidden sm:block">
-          <Logo fill="white" width="140" height="36" />
+        <Link to="/chef/confirm-order" className="shrink-0">
+          <Logo fill="white" width="120" height="32" className="w-[90px] sm:w-[140px] h-auto" />
         </Link>
 
         {/* Danh sách số bàn */}
@@ -132,6 +135,9 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
           </span>
         </div>
 
+        {/* Đổi ngôn ngữ */}
+        <LanguageSwitcher variant="light" />
+
         {/* Khu vực tài khoản */}
         <div className="relative shrink-0">
           <div
@@ -174,7 +180,7 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
                   className="flex items-center justify-between p-3 w-full gap-4 text-[#424242] hover:bg-slate-100 cursor-pointer transition-colors"
                   onClick={handleLogout}
                 >
-                  Đăng xuất
+                  {t("common.logout")}
                   <LogOut size={16} />
                 </button>
               </div>

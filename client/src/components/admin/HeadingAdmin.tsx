@@ -6,6 +6,8 @@ import { useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
 import { useUserInfo } from "@/hook/auth";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 interface HeadingAdminProps {
   isOpen: boolean;
@@ -24,6 +26,7 @@ const HeadingAdmin = ({ isOpen, handleToggleNavbar }: HeadingAdminProps) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useUserInfo();
+  const { t } = useTranslation();
 
   const displayName = userInfo?.name || userInfo?.username || "Tài khoản";
 
@@ -54,7 +57,9 @@ const HeadingAdmin = ({ isOpen, handleToggleNavbar }: HeadingAdminProps) => {
           </button>
         </div>
 
-        {/* Right: user menu */}
+        {/* Right: language + user menu */}
+        <div className="flex items-center gap-1">
+        <LanguageSwitcher variant="light" />
         <div className="relative">
           <div
             className="flex items-center gap-3 pl-3 pr-2 py-1.5 rounded-full hover:bg-white/15 cursor-pointer transition-colors"
@@ -97,12 +102,13 @@ const HeadingAdmin = ({ isOpen, handleToggleNavbar }: HeadingAdminProps) => {
                   className="flex items-center justify-between p-3 w-full gap-4 text-[#424242] hover:bg-slate-100 cursor-pointer transition-colors"
                   onClick={handleLogout}
                 >
-                  Đăng xuất
+                  {t("common.logout")}
                   <LogOut size={16} />
                 </button>
               </div>
             </>
           )}
+        </div>
         </div>
       </div>
     </header>

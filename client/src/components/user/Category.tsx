@@ -4,6 +4,7 @@ import { FoodItem, useGetAllMenuItemsQuery } from "@/service/menuItemApi";
 import { useEffect, useState } from "react";
 import Loading from "../Loading";
 import Reveal from "../Reveal";
+import { useTranslation } from "react-i18next";
 
 const Category = ({
   categories,
@@ -12,6 +13,7 @@ const Category = ({
   categories: string[];
   inputSearch: string;
 }) => {
+  const { t } = useTranslation();
   const { data, isSuccess, isLoading, isFetching } = useGetAllMenuItemsQuery();
   const [foodItems, setFoodItems] = useState<FoodItem[]>([]);
   const [isShowMore, setIsShowMore] = useState(false);
@@ -48,7 +50,7 @@ const Category = ({
   return (
     <div className="flex flex-col gap-4 lg:mt-[3vh] mt-[1vh] w-full items-center">
       <h3 className="font-bold text-[3vw] md:text-[2vw] lg:text-[1.5vw] text-primary-100">
-        Sản phẩm
+        {t("menu.products")}
       </h3>
       <div className="grid grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 flex-1 justify-items-center w-full">
         {currentItems.map((item, index) => (
@@ -72,7 +74,7 @@ const Category = ({
           className="lg:mt-5 flex gap-2 items-center lg:text-[1.3vw] text-[1.3vh] btn"
           onClick={() => setIsShowMore(!isShowMore)}
         >
-          {isShowMore ? "Thu gọn" : "Xem thêm sản phẩm"}
+          {isShowMore ? t("menu.collapse") : t("menu.showMore")}
           <ArrowRight size={20} />
         </button>
       )}

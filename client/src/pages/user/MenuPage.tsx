@@ -4,11 +4,13 @@ import { useGetAllCategoriesQuery } from "@/service/categoryApi";
 import { useState } from "react";
 import CategoryIcon from "@/components/user/CategoryIcon";
 import Reveal from "@/components/Reveal";
+import { useTranslation } from "react-i18next";
 
 const MenuPage = () => {
   const { data, isLoading } = useGetAllCategoriesQuery();
   const [categories, setCategories] = useState<string[]>([]);
   const [inputSearch, setInputSearch] = useState<string>("");
+  const { t } = useTranslation();
 
   if (isLoading) {
     return <Loading />;
@@ -29,7 +31,7 @@ const MenuPage = () => {
       <div className="flex flex-col gap-2 md:pl-16 lg:pl-0">
         <input
           type="text"
-          placeholder="Tìm kiếm món ăn..."
+          placeholder={t("menu.searchPlaceholder")}
           className="w-full sm:w-[50vw] h-[5vh] lg:h-[6vh] rounded-lg px-4 text-primary-100 bg-white focus:outline-none focus:ring-2 focus:ring-primary-100 border-2 "
           onChange={(e) => setInputSearch(e.target.value)}
         />
@@ -69,7 +71,7 @@ const MenuPage = () => {
             onClick={() => setCategories([])}
             className="self-start text-sm text-gray-500 hover:text-black underline mt-1"
           >
-            Xóa lọc ({categories.length})
+            {t("menu.clearFilter")} ({categories.length})
           </button>
         )}
       </div>
