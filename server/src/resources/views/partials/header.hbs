@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container">
+    <!-- Logo hoặc tiêu đề -->
+    <a class="navbar-brand fw-bold text-primary" href="#">F-ORDER</a>
+
+    <!-- Nút toggle cho mobile -->
+    <div class="">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Nội dung navbar -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- Dropdown menu -->
+        <div class="dropdown">
+          <img
+            class="user-avatar"
+            src="https://files.fullstack.edu.vn/f8-prod/user_photos/316790/6440acf5a4221.jpg"
+            alt=""
+          />
+          <button
+            class="btn btn-secondary dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Duc Minh
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/menu-item/createShow">Tạo món ăn</a></li>
+            <li><a class="dropdown-item" href="/categories/createShow">Tạo loại
+                món ăn</a></li>
+            <li><a class="dropdown-item" href="">Món ăn của tôi</a></li>
+            <li><a class="dropdown-item" href="/tables/show">Bàn ăn</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

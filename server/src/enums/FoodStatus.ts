@@ -1,0 +1,6 @@
+export enum FoodStatus {
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  COMPLETED = "COMPLETED",
+  SERVED = "SERVED",
+}

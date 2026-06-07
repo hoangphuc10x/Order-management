@@ -1,0 +1,46 @@
+API
+
+// authen
+[POST] https://f-order-production.up.railway.app/auth/signup
+[POST] https://f-order-production.up.railway.app/auth/login
+[POST] https://f-order-production.up.railway.app/auth/refresh-token
+[POST] https://f-order-production.up.railway.app/auth/logout
+
+// order
+[GET] https://f-order-production.up.railway.app/orders/get-all
+[GET] https://f-order-production.up.railway.app/orders/:id
+[GET] https://f-order-production.up.railway.app/orders/ordered/table/:tableId
+[GET] https://f-order-production.up.railway.app/orders/ordered/user/:userId
+[POST] https://f-order-production.up.railway.app/orders/update-status/:id
+[PATCH] https://f-order-production.up.railway.app/orders/update-orderItems/:id
+
+
+// table
+[GET] https://f-order-production.up.railway.app/tables/get-all
+[GET] https://f-order-production.up.railway.app/tables/:id
+[POST] https://f-order-production.up.railway.app/tables/create
+[DELETE] https://f-order-production.up.railway.app/tables/delete/:id
+
+// categories
+[GET] https://f-order-production.up.railway.app/categories/get-all
+[GET] https://f-order-production.up.railway.app/categories/:id
+[POST] https://f-order-production.up.railway.app/categories/create
+[PUT] https://f-order-production.up.railway.app/categories/:id/edit
+[DELETE] https://f-order-production.up.railway.app/categories/:id/delete
+
+// menu-item
+[GET] https://f-order-production.up.railway.app/menu-item/get-all
+[GET] https://f-order-production.up.railway.app/menu-item/:id
+[POST] https://f-order-production.up.railway.app/menu-item/create
+[PUT] https://f-order-production.up.railway.app/menu-item/:id/edit
+[DELETE] https://f-order-production.up.railway.app/menu-item/:id/delete
+
+// kitchens
+[GET] https://f-order-production.up.railway.app/kitchens/get-all
+[PATCH] https://f-order-production.up.railway.app/kitchens/update-status/:id
+
+// upload file images
+[POST] https://f-order-production.up.railway.app/uploads/staff
+[POST] https://f-order-production.up.railway.app/uploads/food
+[DELETE] https://f-order-production.up.railway.app/uploads/staff/delete
+[DELETE] https://f-order-production.up.railway.app/uploads/food/delete

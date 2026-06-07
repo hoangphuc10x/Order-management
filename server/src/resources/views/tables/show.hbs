@@ -1,0 +1,16 @@
+<div class="mt-4">
+  <div class="row">
+    {{#each tables}}
+      <div class="col-sm-6 col-lg-4">
+        <div class="card card-course-item" style="width: 18rem;">
+          <a href="">
+            <img src="{{this.qrCode}}" class="card-img-top" alt="" />
+          </a>
+          <div class="card-body">
+            <h5 class="card-title">{{this.tableNumber}}</h5>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>

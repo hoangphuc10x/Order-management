@@ -1,0 +1,60 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc",
+    "dev": "nodemon src/index.ts --watch src --exec \"npx ts-node\"",
+    "seed": "ts-node src/seed.ts"
+  },
+  "keywords": [
+    "paman"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/socket.io": "^3.0.1",
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.6.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-handlebars": "^8.0.1",
+    "firebase-admin": "^13.2.0",
+    "fuse.js": "^7.1.0",
+    "ioredis": "^5.6.1",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "mongoose": "8.10.1",
+    "mongoose-slug-updater": "^3.3.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.2",
+    "nodemon": "^3.1.9",
+    "qrcode": "^1.5.4",
+    "slugify": "^1.6.6",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/express-handlebars": "^5.3.1",
+    "@types/joi": "^17.2.2",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/morgan": "^1.9.9",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.13.14",
+    "@types/qrcode": "^1.5.5",
+    "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.25.4",
+    "postcss": "^8.5.2",
+    "sass": "^1.77.0",
+    "tailwindcss": "^4.0.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
