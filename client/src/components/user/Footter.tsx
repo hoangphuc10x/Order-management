@@ -1,41 +1,59 @@
 import Contact from "@/icons/Contact";
 import Logo from "@/icons/Logo";
 
+const FooterCol = ({ title, items }: { title: string; items: string[] }) => (
+  <div className="flex flex-col gap-3">
+    <h3 className="text-sm lg:text-base font-bold">{title}</h3>
+    <ul className="flex flex-col gap-2 text-xs lg:text-sm text-white/75">
+      {items.map((it) => (
+        <li key={it} className="hover:text-white transition-colors cursor-pointer">
+          {it}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
 const Footter = () => {
   return (
-    <div className="relative w-full bg-primary-600 lg:py-16 mt-2 lg:mt-6">
-      <div className="absolute left-6 lg:top-14  "><Logo width="150" height="40" /></div>
-      <div className="h-fit  text-black grid lg:grid-cols-4 lg:grid-rows-1 lg:gap-2 w-full lg:px-16 px-10 pt-10 pb-20">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-bold lg:text-lg">Liên Hệ</h3>
-          <div className="flex lg:flex-col flex-row gap-8 lg:gap-3 text-slate-600 text-xs lg:text-sm  ">
-            <span>Hotline: +(123) 456-7890</span>
-            <span>Mail: foodorder@gmail.com</span>
+    <footer className="w-full bg-gradient-to-br from-primary-100 via-primary-300 to-primary-400 text-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-16 py-12">
+        {/* Hàng trên: thương hiệu + các cột thông tin */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+            <Logo width="150" height="40" fill="white" />
+            <p className="text-sm text-white/75 leading-relaxed">
+              Tinh hoa ẩm thực Đà Nẵng, mang đậm hương vị truyền thống.
+            </p>
           </div>
+
+          <FooterCol
+            title="Liên Hệ"
+            items={["Hotline: +(123) 456-7890", "Mail: foodorder@gmail.com"]}
+          />
+          <FooterCol
+            title="Hỗ trợ khách hàng"
+            items={["Câu hỏi thường gặp", "Hướng dẫn thanh toán"]}
+          />
+          <FooterCol title="Khu Vực" items={["Đà Nẵng"]} />
+          <FooterCol
+            title="Ứng Dụng & Đối Tác"
+            items={["Tải ứng dụng", "Bản đồ vị trí nhà hàng"]}
+          />
         </div>
-        <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-bold lg:text-lg">Hỗ trợ khách hàng</h3>
-          <div className="flex lg:flex-col flex-row gap-8 lg:gap-3 text-slate-600 text-xs lg:text-sm">
-            <span>Câu hỏi thường gặp</span>
-            <span>Hướng dẫn thanh toán</span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-bold lg:text-lg">Khu Vực</h3>
-          <div className="flex lg:flex-col flex-row gap-8 lg:gap-3 text-slate-600 text-xs lg:text-sm">
-            <span>Đà nẵng</span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-bold lg:text-lg">Ứng Dụng & Đối Tác</h3>
-          <div className="flex lg:flex-col flex-row gap-8 lg:gap-3 text-slate-600 text-xs lg:text-sm">
-            <span>Tải ứng dụng</span>
-            <span>Bản đồ vị trí nhà hàng</span>
-          </div>
+
+        {/* Đường kẻ phân cách */}
+        <div className="h-px bg-white/20 my-8" />
+
+        {/* Hàng dưới: mạng xã hội + bản quyền */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <Contact />
+          <p className="text-xs text-white/70">
+            © 2024 Food Order. All rights reserved.
+          </p>
         </div>
       </div>
-      <div className=" absolute lg:bottom-8 bottom-1 left-4 "> <Contact/></div>
-    </div>
+    </footer>
   );
 };
 

@@ -4,9 +4,9 @@ import Footter from "@/components/user/Footter";
 
 const HomePage = () => {
   return (
-    <div className="flex flex-col h-screen absolute top-0 w-full">
-      <div className="relative h-fit w-full text-white">
-          <img src={background} alt="" className="w-full" />
+    <div className="flex flex-col absolute top-0 w-full">
+      <div className="relative h-fit w-full text-white leading-none">
+          <img src={background} alt="" className="w-full block" />
           <div className="absolute w-full h-full flex flex-col top-0">
             <div className="w-full h-[50%] flex flex-col">
 
@@ -26,7 +26,6 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="flex-1"></div>
       <Footter />
     </div>
   );

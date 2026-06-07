@@ -88,7 +88,7 @@ const RevenueChart = () => {
       title: {
         display: true,
         text: "Thống kê doanh thu",
-        color: "#FBBC05",
+        color: "#7C3AED",
         font: {
           size: 20,
         },

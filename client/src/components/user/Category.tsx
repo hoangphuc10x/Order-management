@@ -3,6 +3,7 @@ import Item from "./Item";
 import { FoodItem, useGetAllMenuItemsQuery } from "@/service/menuItemApi";
 import { useEffect, useState } from "react";
 import Loading from "../Loading";
+import Reveal from "../Reveal";
 
 const Category = ({
   categories,
@@ -50,15 +51,20 @@ const Category = ({
         Sản phẩm
       </h3>
       <div className="grid grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 flex-1 justify-items-center w-full">
-        {currentItems.map((item) => (
-          <Item
+        {currentItems.map((item, index) => (
+          <Reveal
             key={item._id}
-            id={item._id}
-            name={item.name}
-            price={item.price}
-            imageUrl={item.imageUrl}
-            isAvailable={item.isAvailable}
-          />
+            delay={(index % 4) * 0.08}
+            className="w-full flex justify-center"
+          >
+            <Item
+              id={item._id}
+              name={item.name}
+              price={item.price}
+              imageUrl={item.imageUrl}
+              isAvailable={item.isAvailable}
+            />
+          </Reveal>
         ))}
       </div>
       {foodItems.length > 8 && (

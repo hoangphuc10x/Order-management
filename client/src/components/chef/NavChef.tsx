@@ -94,7 +94,7 @@ const ItemNavbar = ({ label, Icon, path, isOpen }: ItemNavbarProps) => {
           >
             {isOpen ? (
               <>
-                <Icon fill={`${isActive || isHovered ? "#FBBC05" : "#000"}`} />
+                <Icon fill={`${isActive || isHovered ? "#7C3AED" : "#000"}`} />
                 <span
                   className={`${
                     isOpen
@@ -110,7 +110,7 @@ const ItemNavbar = ({ label, Icon, path, isOpen }: ItemNavbarProps) => {
                 </span>
               </>
             ) : (
-              <Icon fill={`${isActive || isHovered ? "#FBBC05" : "#000"}`} />
+              <Icon fill={`${isActive || isHovered ? "#7C3AED" : "#000"}`} />
             )}
           </div>
         )}

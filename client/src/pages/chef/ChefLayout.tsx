@@ -20,14 +20,14 @@ const ChefLayout = () => {
 
       <div className="flex">
         <div
-          className={`fixed left-0 top-[60px] h-[calc(100vh-60px)] bg-white shadow-md transition-all duration-200 ease-in-out ${
+          className={`fixed left-0 top-[64px] h-[calc(100vh-64px)] bg-white shadow-md transition-all duration-200 ease-in-out ${
             isOpen ? "w-[20%]" : "w-[6%]"
           }`}
         >
           <NavChef isOpen={isOpen} />
         </div>
         <div
-          className={`ml-auto transition-all duration-300 h-full  mt-[60px] p-4 flex justify-center items-center ${
+          className={`ml-auto transition-all duration-300 h-full  mt-[64px] p-4 flex justify-center items-center ${
             isOpen ? "w-[80%] ml-[20%]" : "w-[94%] ml-[6%]"
           }`}
         >

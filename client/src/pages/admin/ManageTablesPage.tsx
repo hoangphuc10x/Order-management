@@ -48,7 +48,7 @@ const ManageTablesPage = () => {
       <div className="h-16 flex w-full justify-between items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
         <h3 className="text-white font-bold text-xl">Quản lý bàn</h3>
         <button
-          className="flex gap-1 py-1 px-3 items-center text-white border bg-primary-100 border-[#B38500] hover:bg-yellow-300 rounded-xl"
+          className="flex gap-1 py-1 px-3 items-center text-white border bg-primary-100 border-[#6D28D9] hover:bg-yellow-300 rounded-xl"
           onClick={() => setShowFormCreateTable(true)}
         >
           <Plus size={20} />
@@ -61,7 +61,7 @@ const ManageTablesPage = () => {
         {(data?.result || []).map((table) => (
           <div className="relative" key={table._id}>
             <button
-              className={`p-1 flex flex-col justify-center items-center w-full min-h-28 border rounded-lg border-[#B38500] cursor-pointer  ${
+              className={`p-1 flex flex-col justify-center items-center w-full min-h-28 border rounded-lg border-[#6D28D9] cursor-pointer  ${
                 table.status === "AVAILABLE"
                   ? " bg-secondary-100 "
                   : " bg-primary-500 hover:bg-yellow-300"

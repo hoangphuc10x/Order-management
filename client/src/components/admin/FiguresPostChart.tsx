@@ -64,7 +64,7 @@ const FiguresPostChart = () => {
       {
         label: "Bài viết",
         data: monthlyRevenue,
-        backgroundColor: "#FBBC05",
+        backgroundColor: "#7C3AED",
         borderRadius: 4,
       },
     ],

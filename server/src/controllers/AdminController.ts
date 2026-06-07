@@ -167,11 +167,12 @@ export default class AdminController extends BaseController {
   public updateStaff = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const { username, role } = req.body;
+      const { username, role, email } = req.body;
 
       const data = {
         username,
         role,
+        email,
       };
 
       const result = await this.adminService.updateStaff(id as string, data);

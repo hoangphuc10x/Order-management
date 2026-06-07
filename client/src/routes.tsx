@@ -30,6 +30,7 @@ import SortFood from "./pages/chef/SortFood";
 import HistoryFood from "./pages/chef/HistoryFood";
 import { lazy } from "react";
 import ShowTablePage from "./pages/staff/ShowTablePage.tsx";
+import StaffLayout from "./pages/staff/StaffLayout.tsx";
 import DiscountTicket from "./pages/admin/DiscountTicket.tsx";
 import ProtectedRouteRes from "./components/auth/ProtectedRouteRes.tsx";
 
@@ -141,8 +142,13 @@ export const router = createBrowserRouter([
     element: <ProtectedRouteRes allowedRoles={["staff"]} />,
     children: [
       {
-        element: <ShowTablePage />,
-        path: "/staff/show-table",
+        element: <StaffLayout />,
+        children: [
+          {
+            element: <ShowTablePage />,
+            path: "/staff/show-table",
+          },
+        ],
       },
     ],
   },

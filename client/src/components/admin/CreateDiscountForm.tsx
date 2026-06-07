@@ -212,11 +212,11 @@ const CreateDiscountForm = ({
             <div className="flex justify-center gap-2 mt-5 mb-11 ">
               <button
                 onClick={() => setShowForm(false)}
-                className="h-[32px] w-[100px] bg-white border border-[#FBBC05] rounded-2xl hover:bg-secondary-100"
+                className="h-[32px] w-[100px] bg-white border border-[#7C3AED] rounded-2xl hover:bg-secondary-100"
               >
                 Đóng
               </button>
-              <div className="h-[32px] w-[100px] bg-[#FBBC05] text-white rounded-2xl flex justify-center items-center hover:bg-secondary-100">
+              <div className="h-[32px] w-[100px] bg-[#7C3AED] text-white rounded-2xl flex justify-center items-center hover:bg-secondary-100">
                 <Alert
                   open="Tạo"
                   btn1="Hủy"

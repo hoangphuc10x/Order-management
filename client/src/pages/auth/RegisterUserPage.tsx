@@ -78,7 +78,7 @@ const RegisterUser: React.FC = () => {
   return (
     <div className="sm:w-[496px] absolute sm:top-14 sm:left-32 h-fit w-full top-5 flex justify-center ">
       <div className="flex flex-col items-center justify-center  w-[80vw] ">
-        <p className="text-3xl font-bold mb-12 mt-7 text-[#FBBC05] ">Đăng Ký</p>
+        <p className="text-3xl font-bold mb-12 mt-7 text-white ">Đăng Ký</p>
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <FormField<LoginWithPhone>
             className="mb-8"
@@ -91,7 +91,7 @@ const RegisterUser: React.FC = () => {
           />
           <button
             type="submit"
-            className="w-full py-3 text-black/75 bg-yellow-500 rounded-lg hover:bg-yellow-600 transition"
+            className="w-full py-3 text-white font-semibold bg-gradient-to-r from-primary-100 to-primary-400 rounded-lg hover:opacity-90 shadow-md transition-opacity"
           >
             Đăng Ký
           </button>

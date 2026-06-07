@@ -44,11 +44,11 @@ const CreateTable: React.FC<CreateTableFormProps> = ({
             <div className="flex justify-center gap-2 mt-5 mb-11">
               <button
                 onClick={() => setShowFormCreateTable(false)}
-                className="h-[32px] w-[100px] bg-white border border-[#FBBC05] hover:bg-yellow-500 rounded-2xl"
+                className="h-[32px] w-[100px] bg-white border border-[#7C3AED] hover:bg-yellow-500 rounded-2xl"
               >
                 Đóng
               </button>
-              <div className="h-[32px] w-[100px] bg-[#FBBC05] hover:bg-yellow-600 text-white rounded-2xl flex justify-center items-center">
+              <div className="h-[32px] w-[100px] bg-[#7C3AED] hover:bg-yellow-600 text-white rounded-2xl flex justify-center items-center">
                 <Alert
                   open="Tạo"
                   btn1="Hủy"

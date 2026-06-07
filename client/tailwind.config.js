@@ -15,15 +15,31 @@ module.exports = {
   	},
   	extend: {
   		colors: {
+  			// Tone chủ đạo: Tím → Hồng (rực rỡ, hiện đại)
+  			// Gradient thương hiệu: from-primary-100 (tím) -> to-primary-400 (hồng)
   			primary: {
-  				'100': '#FBBC05',
-  				'200': '#FFB056',
-  				'300': '#F9BC15',
-  				'400': '#E7DD9E',
-  				'500': '#FEE98A',
-  				'600': '#F8D01B',
+  				'100': '#7C3AED',
+  				'200': '#8B5CF6',
+  				'300': '#A855F7',
+  				'400': '#EC4899',
+  				'500': '#F0ABFC',
+  				'600': '#6D28D9',
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))'
+  			},
+  			// Ghi đè bảng "yellow" mặc định của Tailwind sang dải tím
+  			// để toàn bộ class yellow-* cũ tự đổi theo tone mới.
+  			yellow: {
+  				'50': '#FAF5FF',
+  				'100': '#F3E8FF',
+  				'200': '#E9D5FF',
+  				'300': '#D8B4FE',
+  				'400': '#A855F7',
+  				'500': '#7C3AED',
+  				'600': '#6D28D9',
+  				'700': '#5B21B6',
+  				'800': '#4C1D95',
+  				'900': '#3B0764'
   			},
   			secondary: {
   				'100': '#D9D9D9',
@@ -31,7 +47,7 @@ module.exports = {
   				foreground: 'hsl(var(--secondary-foreground))'
   			},
   			text: {
-  				'100': '#FBBC05',
+  				'100': '#7C3AED',
   				'200': '#4F4F4F',
   				'300': '#828282',
   				'400': '#BDBDBD',

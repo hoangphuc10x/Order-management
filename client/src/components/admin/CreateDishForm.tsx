@@ -162,11 +162,11 @@ const CreateDishForm: React.FC<CreateDishFormProps> = ({ setShowForm }) => {
             <div className="flex justify-center gap-2 mt-5 mb-11">
               <button
                 onClick={() => setShowForm(false)}
-                className="h-[32px] w-[100px] bg-white border border-[#FBBC05] rounded-2xl"
+                className="h-[32px] w-[100px] bg-white border border-[#7C3AED] rounded-2xl"
               >
                 Đóng
               </button>
-              <div className="h-[32px] w-[100px] bg-[#FBBC05] text-white rounded-2xl flex justify-center items-center">
+              <div className="h-[32px] w-[100px] bg-[#7C3AED] text-white rounded-2xl flex justify-center items-center">
                 <Alert
                   open="Tạo"
                   btn1="Hủy"

@@ -78,7 +78,7 @@ const LoginPage: React.FC = () => {
   }, [isError]);
   return (
     <div className="flex flex-col items-center justify-center w-[496px] absolute top-14 left-32 h-fit ">
-      <p className="text-3xl font-bold mb-12 mt-7 text-[#FBBC05] ">Đăng Nhập</p>
+      <p className="text-3xl font-bold mb-12 mt-7 text-white ">Đăng Nhập</p>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         {/* <div className="mb-8 w-full h-14">
           <div className="relative w-full h-12">
@@ -122,7 +122,7 @@ const LoginPage: React.FC = () => {
         <div className="text-right  mb-7">
           <a
             href="#"
-            className="bg-gradient-to-r from-primary-100 to-[#FF6200] bg-clip-text text-transparent hover:underline"
+            className="text-gray-200 hover:text-white hover:underline"
           >
             Quên mật khẩu?
           </a>
@@ -130,18 +130,18 @@ const LoginPage: React.FC = () => {
 
         <button
           type="submit"
-          className="w-full py-3 text-black/75 bg-yellow-500 rounded-lg hover:bg-yellow-600 transition"
+          className="w-full py-3 text-white font-semibold bg-gradient-to-r from-primary-100 to-primary-400 rounded-lg hover:opacity-90 shadow-md transition-opacity"
         >
           Đăng nhập
         </button>
       </form>
       <Link
         to="/register/admin"
-        className="text-xl bg-gradient-to-r from-primary-100 to-[#FF6200] bg-clip-text text-transparent my-7 "
+        className="text-xl text-gray-200 hover:text-white my-7 "
       >
         Đăng ký tài khoản
       </Link>
-      <span className="text-sm text-primary-100 mb-7">
+      <span className="text-sm text-gray-300 mb-7">
         Liên kết tài khoản của bạn để tiếp tục sử dụng dịch vụ
       </span>
       <Link

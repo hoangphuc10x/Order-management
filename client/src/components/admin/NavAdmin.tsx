@@ -10,8 +10,8 @@ import DiscountIcon from "../../icons/DiscountIcon";
 
 const NavAdmin = ({ isOpen }: { isOpen: boolean }) => {
   return (
-    <div className="w-full h-full bg-white border-r border-gray-200">
-      <div className="w-full">
+    <div className="w-full h-full bg-white border-r border-gray-200 py-4 overflow-y-auto">
+      <div className="w-full flex flex-col gap-1 px-2">
         <ItemNavbar
           label="Bảng điều khiển"
           Icon={DashboardIcon}
@@ -70,53 +70,36 @@ const ItemNavbar = ({ label, Icon, path, isOpen }: ItemNavbarProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div
-      className="flex py-1  w-full gap-5 items-center hover:text-primary hover:bg-hover"
+    <NavLink
+      to={path}
+      title={!isOpen ? label : undefined}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      className={({ isActive }) =>
+        `relative flex items-center gap-4 rounded-xl py-3 transition-all duration-200 ${
+          isOpen ? "px-4" : "px-0 justify-center"
+        } ${
+          isActive
+            ? "bg-primary-100/15 text-primary-100 font-semibold"
+            : "text-text-200 hover:bg-hover"
+        }`
+      }
     >
-      <NavLink
-        to={path}
-        className={({ isActive }) =>
-          isActive ? "w-full p-3 pl-9  bg-hover" : "pl-9 w-full p-3"
-        }
-      >
-        {({ isActive }) => (
-          <div
-            className={
-              isOpen
-                ? isActive
-                  ? "flex gap-5 w-full h-full items-center font-semibold text-text-100"
-                  : " flex gap-5 w-full h-full items-center"
-                : isActive
-                ? "flex gap-5 w-full h-full items-center justify-center font-semibold text-text-100"
-                : " flex gap-5 w-full h-full items-center justify-center"
-            }
-          >
-            {isOpen ? (
-              <>
-                <Icon fill={`${isActive || isHovered ? "#FBBC05" : "#000"}`} />
-                <span
-                  className={`${
-                    isOpen
-                      ? isActive || isHovered
-                        ? "font-semibold text-text-100 block"
-                        : ""
-                      : isActive
-                      ? "font-semibold text-text-100 hidden"
-                      : ""
-                  }`}
-                >
-                  {label}
-                </span>
-              </>
-            ) : (
-              <Icon fill={`${isActive || isHovered ? "#FBBC05" : "#000"}`} />
-            )}
-          </div>
-        )}
-      </NavLink>
-    </div>
+      {({ isActive }) => (
+        <>
+          {/* Left accent bar when active */}
+          <span
+            className={`absolute left-0 top-1/2 -translate-y-1/2 h-7 w-1 rounded-r-full bg-primary-100 transition-opacity ${
+              isActive ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          <Icon fill={isActive || isHovered ? "#7C3AED" : "#4F4F4F"} />
+          {isOpen && (
+            <span className="text-[15px] whitespace-nowrap">{label}</span>
+          )}
+        </>
+      )}
+    </NavLink>
   );
 };
 

@@ -3,6 +3,7 @@ import Category from "@/components/user/Category";
 import { useGetAllCategoriesQuery } from "@/service/categoryApi";
 import { useState } from "react";
 import CategoryIcon from "@/components/user/CategoryIcon";
+import Reveal from "@/components/Reveal";
 
 const MenuPage = () => {
   const { data, isLoading } = useGetAllCategoriesQuery();
@@ -33,26 +34,44 @@ const MenuPage = () => {
           onChange={(e) => setInputSearch(e.target.value)}
         />
         <div
-          className="flex gap-4 lg:gap-20 overflow-x-auto w-full "
+          className="flex gap-3 lg:gap-5 overflow-x-auto w-full py-2"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {data?.result.map((category) => (
-            <div
-              key={category._id}
-              className={`w-fit flex flex-col items-center cursor-pointer transition-all text-primary-100 ${
-                categories.includes(category._id)
-                  ? "text-white  rounded-lg bg-primary-100 "
-                  : ""
-              }`}
-              onClick={() => handleCategoryClick(category._id)}
-            >
-              <CategoryIcon name={category.name} />
-              <span className="text-xs w-16 lg:text-lg lg:w-28 text-center">
-                {category.name}
-              </span>
-            </div>
-          ))}
+          {data?.result.map((category, index) => {
+            const active = categories.includes(category._id);
+            return (
+              <Reveal
+                key={category._id}
+                delay={index * 0.07}
+                y={16}
+                className="shrink-0"
+              >
+                <button
+                  title={`Lọc: ${category.name}`}
+                  className={`w-full flex flex-col items-center justify-center gap-1 cursor-pointer rounded-2xl border-2 p-3 lg:px-5 transition-all min-w-[84px] lg:min-w-[120px] ${
+                    active
+                      ? "bg-gradient-to-br from-primary-100 to-primary-400 text-white border-transparent shadow-md"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-primary-100 hover:-translate-y-0.5"
+                  }`}
+                  onClick={() => handleCategoryClick(category._id)}
+                >
+                  <CategoryIcon name={category.name} />
+                  <span className="text-xs lg:text-base text-center font-medium">
+                    {category.name}
+                  </span>
+                </button>
+              </Reveal>
+            );
+          })}
         </div>
+        {categories.length > 0 && (
+          <button
+            onClick={() => setCategories([])}
+            className="self-start text-sm text-gray-500 hover:text-black underline mt-1"
+          >
+            Xóa lọc ({categories.length})
+          </button>
+        )}
       </div>
 
       <Category categories={categories} inputSearch={inputSearch} />

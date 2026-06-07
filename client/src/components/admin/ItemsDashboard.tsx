@@ -19,7 +19,7 @@ const ItemsDashboard = () => {
         value={Number(revenueData?.totalRevenue).toLocaleString("vi-VN") || 0}
         unit="VNĐ"
         icon={<Calculator className="w-6 h-6" color="#C15555" />}
-        color="#ffcf3f"
+        color="#EC4899"
         path="/manager-revenues"
       />
       <ItemDashboard
@@ -34,7 +34,7 @@ const ItemsDashboard = () => {
         title="Tổng món ăn"
         value={Number(revenueData?.totalMenuItems).toLocaleString("vi-VN") || 0}
         unit="món ăn"
-        icon={<ConciergeBell className="w-6 h-6" color="#F8D01B" />}
+        icon={<ConciergeBell className="w-6 h-6" color="#404040" />}
         color="#48538f"
         path="/manager-foods"
       />

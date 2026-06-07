@@ -148,14 +148,15 @@ export const adminApi = rootApi.injectEndpoints({
 
       putUpdateStaff: builder.mutation<
         void,
-        { id: string; username: string; role: string }
+        { id: string; username: string; role: string; email: string }
       >({
-        query: ({ id, username, role }) => ({
+        query: ({ id, username, role, email }) => ({
           url: `/revenues/update-staff/${id}`,
           method: "PUT",
           body: {
             username,
             role,
+            email,
           },
         }),
       }),

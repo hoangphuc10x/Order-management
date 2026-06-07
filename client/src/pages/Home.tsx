@@ -14,7 +14,7 @@ const Home = () => {
           <Link to="/home" className="sm:block hidden z-20">
             <Logo
               className="w-[27vw] lg:w-[10vw] "
-              fill={location.pathname === "/" ? "#fbbc05 " : "white"}
+              fill={location.pathname === "/" ? "#7C3AED " : "white"}
             />
           </Link>
 

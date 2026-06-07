@@ -28,12 +28,12 @@ const UserLayout = () => {
           {/* Cart Button */}
           <Link
             to="/cart"
-            className="relative z-[100] h-10 w-10 p-2 rounded-lg bg-white border-2 border-primary-100"
+            className="relative z-[100] h-12 w-12 p-2.5 rounded-full bg-gradient-to-br from-primary-100 to-primary-400 shadow-lg hover:scale-105 transition-transform"
           >
-            <span className="text-xs w-[20px] h-[20px] absolute -top-2 -left-2 text-red-500 rounded-full bg-white flex justify-center items-center border-primary-100 border-2">
+            <span className="text-xs w-[20px] h-[20px] absolute -top-2 -left-2 text-primary-100 rounded-full bg-white flex justify-center items-center border-primary-100 border-2 font-bold">
               {quantity}
             </span>
-            <CartIcon className="w-10 h-10" fill="hsl(44.63deg 96.85% 50.2%)" />
+            <CartIcon className="w-full h-full" fill="#ffffff" />
           </Link>
         </div>
       )}
@@ -47,7 +47,7 @@ const UserLayout = () => {
           <Link to="/" className="sm:block hidden z-20">
             <Logo
               className="w-[27vw] lg:w-[10vw] "
-              fill={location.pathname === "/" ? "#fbbc05 " : "white"}
+              fill={location.pathname === "/" ? "white" : "white"}
             />
           </Link>
 

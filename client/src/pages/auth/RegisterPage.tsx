@@ -1,8 +1,8 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
-import { FolderPen, LockKeyhole, Mail, Phone } from "lucide-react";
+import { BriefcaseBusiness, FolderPen, LockKeyhole, Mail, Phone } from "lucide-react";
 import FormField from "../../components/FormField";
 import Google from "../../icons/Google";
 import { useRegisterMutation } from "@/service/rootApi";
@@ -15,6 +15,7 @@ interface RegisterFormData {
   username: string;
   phone: string;
   fulname: string;
+  role: "staff" | "chef";
 }
 
 const formSchema = yup.object().shape({
@@ -40,6 +41,10 @@ const formSchema = yup.object().shape({
     .matches(/^(0|\+84)\d{9}$/, "Số điện thoại không hợp lệ")
     .required("Vui lòng nhập số điện thoại"),
   fulname: yup.string().required("Vui lòng nhập họ tên"),
+  role: yup
+    .string()
+    .oneOf(["staff", "chef"], "Vai trò không hợp lệ")
+    .required("Vui lòng chọn vai trò"),
 });
 
 interface Err {
@@ -59,6 +64,7 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: yupResolver(formSchema),
+    defaultValues: { role: "staff" },
   });
 
   const onSubmit = async (formData: RegisterFormData) => {
@@ -68,7 +74,7 @@ const RegisterPage = () => {
         username: formData.username,
         password: formData.password,
         phone: formData.phone,
-        role: "manager",
+        role: formData.role,
         email: formData.email,
         fulname: formData.fulname,
       }).unwrap();
@@ -91,7 +97,7 @@ const RegisterPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-[496px] absolute top-4 left-32 h-fit">
-      <p className="text-3xl font-bold mb-12 mt-7 text-[#FBBC05]">Đăng Ký</p>
+      <p className="text-3xl font-bold mb-12 mt-7 text-white">Đăng Ký</p>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <FormField
           className="mb-4 "
@@ -129,6 +135,29 @@ const RegisterPage = () => {
           type="email"
           placeholder="Email"
         />
+        <div className="mb-4 w-full">
+          <div className="relative w-full h-12">
+            <Controller
+              name="role"
+              control={control}
+              render={({ field }) => (
+                <select
+                  {...field}
+                  className="w-full px-4 py-3 pl-10 text-black bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none appearance-none"
+                >
+                  <option value="staff">Nhân viên</option>
+                  <option value="chef">Đầu bếp</option>
+                </select>
+              )}
+            />
+            <span className="absolute left-2 top-3 text-gray-400">
+              <BriefcaseBusiness />
+            </span>
+          </div>
+          {errors.role && (
+            <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
+          )}
+        </div>
         <FormField
           className="mb-4"
           name="password"
@@ -149,18 +178,18 @@ const RegisterPage = () => {
         />
         <button
           type="submit"
-          className="w-full py-3 text-black/75 bg-yellow-500 rounded-lg hover:bg-yellow-600 transition"
+          className="w-full py-3 text-white font-semibold bg-gradient-to-r from-primary-100 to-primary-400 rounded-lg hover:opacity-90 shadow-md transition-opacity"
         >
           Đăng Ký
         </button>
       </form>
       <Link
         to="/login/admin"
-        className="text-xl bg-gradient-to-r from-primary-100 to-[#FF6200] bg-clip-text text-transparent my-4"
+        className="text-xl text-gray-200 hover:text-white my-4"
       >
         Quay lại đăng nhập
       </Link>
-      <span className="text-sm text-primary-100 mb-7">
+      <span className="text-sm text-gray-300 mb-7">
         Liên kết tài khoản của bạn để tiếp tục sử dụng dịch vụ
       </span>
       <Link

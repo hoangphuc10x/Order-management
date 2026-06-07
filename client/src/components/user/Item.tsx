@@ -36,41 +36,37 @@ const Item = (item: ItemProps) => {
           item.isAvailable ? "hidden" : "block"
         }`}
       ></div>
-      <div className="flex flex-col items-center sm:w-72  rounded-xl bg-primary-100  sm:text-[1.5vw] text-[1.6vh] gap-2 shadow-xl drop-shadow-lg relative pb-10 sm:h-[410px] h-72 z-0 w-48 border-2 border-primary-200">
-        <Link to={`/menu/${item.id}`} className="w-full h-2/3">
+      <div className="group flex flex-col sm:w-72 w-48 rounded-2xl bg-white sm:text-[1.5vw] text-[1.6vh] shadow-md hover:shadow-xl relative pb-12 sm:h-[410px] h-72 z-0 border border-gray-200 overflow-hidden transition-all duration-200">
+        <Link to={`/menu/${item.id}`} className="w-full h-2/3 overflow-hidden block">
           <img
             src={item.imageUrl || "https://placehold.co/600x400"}
             alt=""
-            className="w-full h-full rounded-t-xl object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </Link>
-        <span className="font-bold text-center px-2 ">{item.name}</span>
-        <span>{item.price.toLocaleString("vi-VN")} VNĐ</span>
-        <div className="flex justify-end items-center w-full absolute bottom-2 px-4">
+        <div className="flex flex-col flex-1 px-3 pt-2">
+          <span className="font-bold text-gray-800 line-clamp-1">{item.name}</span>
+          <span className="text-gray-500">
+            {item.price.toLocaleString("vi-VN")} VNĐ
+          </span>
+        </div>
+        <div className="flex justify-end items-center w-full absolute bottom-3 px-4">
           {quantity === 0 ? (
             <button
-              className="flex  justify-end items-end   "
+              className="flex items-center justify-center w-9 h-9 bg-gradient-to-br from-primary-100 to-primary-400 rounded-full hover:opacity-90 shadow-md transition-opacity"
               onClick={() => handleAddOrderClick(item)}
             >
-              <Plus color="#FBBC05" className="p-1 bg-black rounded-lg" />
+              <Plus className="text-white" size={18} />
             </button>
           ) : (
-            <div className="flex w-full justify-end items-end flex-1 ">
-              <div className="w-fit flex gap-2 justify-center items-center border-primary-300 bg-white rounded-xl ">
-                <button
-                  className="flex w-fit justify-end items-end "
-                  onClick={() => handleMinusOrderClick(item)}
-                >
-                  <Minus color="#D9D9D9" className="p-1 " />
-                </button>
-                <span className="text-xs lg:text-sm">{quantity}</span>
-                <button
-                  className="flex w-fit justify-end items-end "
-                  onClick={() => handleAddOrderClick(item)}
-                >
-                  <Plus color="#D9D9D9" className="p-1 " />
-                </button>
-              </div>
+            <div className="flex gap-3 justify-center items-center bg-gradient-to-br from-primary-100 to-primary-400 text-white rounded-full px-2 py-1 shadow-md">
+              <button onClick={() => handleMinusOrderClick(item)}>
+                <Minus size={16} />
+              </button>
+              <span className="text-xs lg:text-sm">{quantity}</span>
+              <button onClick={() => handleAddOrderClick(item)}>
+                <Plus size={16} />
+              </button>
             </div>
           )}
         </div>

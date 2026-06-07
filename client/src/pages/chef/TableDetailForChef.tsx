@@ -95,7 +95,7 @@ const TableDetailForChef = () => {
   return (
     <div className=" flex flex-col flex-1 h-full border-2 py-5 gap-4 rounded-lg ">
       <div className="w-full flex justify-center">
-        <span className="font-bold text-xl bg-primary-100 px-2 py-1 rounded-lg">
+        <span className="font-bold text-xl text-white bg-gradient-to-r from-primary-100 to-primary-400 px-4 py-1.5 rounded-lg shadow">
           Bàn số: {tableName}
         </span>
       </div>

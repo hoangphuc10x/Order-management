@@ -73,7 +73,7 @@ const ShowTablePage = () => {
         {(data?.result || []).map((table) => (
           <button
             key={table._id}
-            className={`p-1 flex flex-col justify-center items-center sm:w-[15vw] sm:h-[15vh] w-[35vw] relative border rounded-lg border-[#B38500] cursor-pointer ${
+            className={`p-1 flex flex-col justify-center items-center sm:w-[15vw] sm:h-[15vh] w-[35vw] relative border rounded-lg border-[#6D28D9] cursor-pointer ${
               table.status === "AVAILABLE"
                 ? " bg-secondary-100 "
                 : " bg-primary-500"

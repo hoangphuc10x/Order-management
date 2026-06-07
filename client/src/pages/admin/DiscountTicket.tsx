@@ -69,7 +69,7 @@ const DiscountTicket = () => {
       <div className="h-16 flex w-full justify-between items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
         <h3 className="text-white font-bold text-xl">Quản lý mã giảm giá</h3>
         <button
-          className="flex gap-1 py-1 px-3 items-center text-white border bg-primary-100 hover:bg-yellow-400 border-[#B38500] rounded-xl"
+          className="flex gap-1 py-1 px-3 items-center text-white border bg-primary-100 hover:bg-yellow-400 border-[#6D28D9] rounded-xl"
           onClick={() => setShowForm(true)}
         >
           <Plus size={20} />

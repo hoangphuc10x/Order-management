@@ -8,7 +8,7 @@ interface PaginationProps {
 
 const Panigatation: React.FC<PaginationProps> = ({ pageCount, onPageChange }) => {
   return (
-    <div className="pr-[20vh]">
+    <div className="flex justify-end pr-6 mt-4">
       <ReactPaginate
         previousLabel={<ChevronLeft size={20} />}
         nextLabel={<ChevronRight size={20} />}

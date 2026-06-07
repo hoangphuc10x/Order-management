@@ -1,16 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "@/icons/Logo";
-import { ChevronDown, LogOut, Menu, UserRound } from "lucide-react";
+import { ChevronDown, LogOut, UserRound } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
 import { useUserInfo } from "@/hook/auth";
-
-interface HeadingAdminProps {
-  isOpen: boolean;
-  handleToggleNavbar: () => void;
-}
 
 const ROLE_LABELS: Record<string, string> = {
   manager: "Quản lý",
@@ -19,7 +14,7 @@ const ROLE_LABELS: Record<string, string> = {
   chef_head: "Bếp trưởng",
 };
 
-const HeadingAdmin = ({ isOpen, handleToggleNavbar }: HeadingAdminProps) => {
+const HeadingStaff = () => {
   const [isDown, setIsDown] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,23 +33,12 @@ const HeadingAdmin = ({ isOpen, handleToggleNavbar }: HeadingAdminProps) => {
   return (
     <header className="bg-gradient-to-r from-primary-100 to-primary-400 shadow">
       <div className="flex justify-between items-center h-[64px] px-4 sm:px-6">
-        {/* Left: logo + toggle */}
-        <div className="flex items-center gap-4">
-          <Link to={"/dashboard"} className="shrink-0">
-            <Logo fill="white" width="140" height="36" />
-          </Link>
-          <button
-            className="rounded-lg bg-white/20 hover:bg-white/30 text-white cursor-pointer p-2 transition-colors"
-            onClick={handleToggleNavbar}
-            aria-label="Toggle sidebar"
-          >
-            <Menu
-              className={`${isOpen ? "" : "rotate-180"} w-5 h-5 transition-transform`}
-            />
-          </button>
-        </div>
+        {/* Logo */}
+        <Link to="/staff/show-table" className="shrink-0">
+          <Logo fill="white" width="140" height="36" />
+        </Link>
 
-        {/* Right: user menu */}
+        {/* Khu vực tài khoản */}
         <div className="relative">
           <div
             className="flex items-center gap-3 pl-3 pr-2 py-1.5 rounded-full hover:bg-white/15 cursor-pointer transition-colors"
@@ -109,4 +93,4 @@ const HeadingAdmin = ({ isOpen, handleToggleNavbar }: HeadingAdminProps) => {
   );
 };
 
-export default HeadingAdmin;
+export default HeadingStaff;

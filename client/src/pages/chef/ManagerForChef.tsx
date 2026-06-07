@@ -100,7 +100,7 @@ const ManagerForChef = () => {
                         onClick={() =>
                           handleUpdateStatus(order._id, "PROCESSING")
                         }
-                        className="bg-[#FBBC05] text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                        className="bg-[#7C3AED] text-white px-3 py-1 rounded-xl whitespace-nowrap"
                       >
                         Bắt đầu
                       </button>

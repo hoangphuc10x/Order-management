@@ -27,7 +27,7 @@ const TableShowAll = () => {
             })
           }
           key={table._id}
-          className="p-1 flex flex-col justify-center items-center w-[10vw] h-[12vh] relative border rounded-lg border-[#B38500] cursor-pointer   bg-primary-500 hover:bg-yellow-300"
+          className="p-1 flex flex-col justify-center items-center w-[10vw] h-[12vh] relative border rounded-lg border-[#6D28D9] cursor-pointer   bg-primary-500 hover:bg-yellow-300"
         >
           <div className="absolute size-10 rounded-lg bg-primary-100  flex justify-center items-center top-1 left-1">
             <h3 className="text-xs text-white">{table.tableNumber}</h3>

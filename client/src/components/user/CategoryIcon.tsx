@@ -25,7 +25,7 @@ const CategoryIcon = ({ name = "" }: { name?: string }) => {
       item.keywords.some((kw) => lower.includes(kw))
     )?.Icon ?? Utensils;
 
-  return <IconComponent className="size-10 lg:size-20" />;
+  return <IconComponent className="size-8 lg:size-10" />;
 };
 
 export default CategoryIcon;

@@ -286,17 +286,21 @@ export default class AdminService {
     data: {
       username?: string;
       role?: string;
+      email?: string;
     }
   ): Promise<any | null> => {
     try {
       // Chỉ lấy những field hợp lệ
-      const updateData: Partial<{ username: string; role: string }> = {};
+      const updateData: Partial<{ username: string; role: string; email: string }> = {};
 
       if (typeof data.username === "string") {
         updateData.username = data.username;
       }
       if (typeof data.role === "string") {
         updateData.role = data.role;
+      }
+      if (typeof data.email === "string") {
+        updateData.email = data.email;
       }
 
       // Nếu không có gì để update thì trả về luôn

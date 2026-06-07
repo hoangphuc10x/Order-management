@@ -20,7 +20,7 @@ const CheckPage = () => {
   return (
     <div className="flex  sm:w-[496px] absolute sm:top-14 sm:left-32 h-fit justify-center top-5 w-full">
       <div className="flex flex-col items-center justify-center">
-        <p className="text-3xl font-bold mb-12 mt-7 text-[#FBBC05] ">
+        <p className="text-3xl font-bold mb-12 mt-7 text-white ">
           Bạn đã có tài khoản chưa?
         </p>
         <div className="flex justify-around w-full">

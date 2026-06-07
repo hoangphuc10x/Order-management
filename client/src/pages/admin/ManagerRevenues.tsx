@@ -51,7 +51,7 @@ const ManagerRevenues = () => {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               max={today}
-              className="w-48 h-10 border border-[#FBBC05] rounded-2xl p-2 text-sm"
+              className="w-48 h-10 border border-[#7C3AED] rounded-2xl p-2 text-sm"
             />
           </div>
           <div>
@@ -62,7 +62,7 @@ const ManagerRevenues = () => {
               onChange={(e) => setEndDate(e.target.value)}
               min={startDate }
               max={today}
-              className="w-48 h-10 border border-[#FBBC05] rounded-2xl p-2 text-sm "
+              className="w-48 h-10 border border-[#7C3AED] rounded-2xl p-2 text-sm "
             />
           </div>
         </div>
