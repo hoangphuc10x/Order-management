@@ -9,7 +9,7 @@ interface Props {
 }
 
 const LanguageSwitcher = ({ variant = "light" }: Props) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   const current =
@@ -30,7 +30,7 @@ const LanguageSwitcher = ({ variant = "light" }: Props) => {
       <button
         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full cursor-pointer transition-colors ${triggerClass}`}
         onClick={() => setOpen(!open)}
-        aria-label="Đổi ngôn ngữ"
+        aria-label={t("misc.changeLanguage")}
       >
         <Globe size={18} />
         <span className="text-sm font-medium hidden sm:inline">

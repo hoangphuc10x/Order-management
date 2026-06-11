@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import Loading from "../Loading";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
   useGetDetailStaffQuery,
@@ -16,6 +17,7 @@ interface StaffDetailProps {
 }
 
 const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
+  const { t } = useTranslation();
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [role, setRole] = useState<string>("");
@@ -37,27 +39,27 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
   const handleSave = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      toast.error("Email không hợp lệ");
+      toast.error(t("staffDetail.invalidEmail"));
       return;
     }
     try {
       await updateStaff({ id, username, role, email });
-      toast.success("Cập nhật thành công");
+      toast.success(t("staffDetail.updateSuccess"));
       setIsEditing(false);
       refetch(); // ✅ Cập nhật xong tự fetch lại dữ liệu mới
     } catch (error) {
       console.error("Error updating staff:", error);
-      toast.error("Cập nhật thất bại");
+      toast.error(t("staffDetail.updateFail"));
     }
   };
 
   if (isLoading) return <Loading />;
 
   const ROLE_LABELS: Record<string, string> = {
-    staff: "Nhân viên",
-    chef: "Bếp",
-    chef_head: "Bếp trưởng",
-    manager: "Quản lý",
+    staff: t("roles.staff"),
+    chef: t("roles.chef"),
+    chef_head: t("roles.chefHead"),
+    manager: t("roles.manager"),
   };
 
   const isSelf = _id === data?.result?._id;
@@ -75,7 +77,7 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
         {/* Header */}
         <div className="relative bg-gradient-to-r from-primary-100 to-primary-400 text-white px-6 pt-6 pb-16">
           <span className="block text-center text-lg font-bold">
-            Chi tiết nhân viên
+            {t("staffDetail.title")}
           </span>
           <X
             size={22}
@@ -91,7 +93,7 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
           </div>
           <h3 className="mt-3 text-xl font-bold text-gray-800">{username}</h3>
           <span className="mt-1 inline-block text-xs font-medium text-primary-100 bg-secondary-100 px-3 py-1 rounded-full">
-            {ROLE_LABELS[role] || role || "Chưa xác định"}
+            {ROLE_LABELS[role] || role || t("staffDetail.undefined")}
           </span>
         </div>
 
@@ -99,7 +101,7 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
         <div className="px-8 py-6 space-y-5">
           <div>
             <label className="block text-sm font-semibold text-gray-500 mb-1">
-              Tên nhân viên
+              {t("staffDetail.nameLabel")}
             </label>
             <input
               type="text"
@@ -117,7 +119,7 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label className="block text-sm font-semibold text-gray-500 mb-1">
-                Email
+                {t("staffDetail.emailLabel")}
               </label>
               <input
                 type="email"
@@ -133,7 +135,7 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-500 mb-1">
-                Ngày đăng ký
+                {t("staffDetail.joinDate")}
               </label>
               <p className="p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700">
                 {data?.result?.createdAt
@@ -145,7 +147,7 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
 
           <div>
             <label className="block text-sm font-semibold text-gray-500 mb-1">
-              Chức vụ
+              {t("staffDetail.roleLabel")}
             </label>
             <select
               className={`w-full p-2.5 border rounded-lg outline-none transition ${
@@ -157,15 +159,15 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
               value={role}
               onChange={(e) => setRole(e.target.value)}
             >
-              <option value="">Chọn chức vụ</option>
-              <option value="staff">Nhân viên</option>
-              <option value="chef">Bếp</option>
-              <option value="chef_head">Bếp trưởng</option>
-              <option value="manager">Quản lý</option>
+              <option value="">{t("staffDetail.selectRole")}</option>
+              <option value="staff">{t("roles.staff")}</option>
+              <option value="chef">{t("roles.chef")}</option>
+              <option value="chef_head">{t("roles.chefHead")}</option>
+              <option value="manager">{t("roles.manager")}</option>
             </select>
             {isSelf && (
               <p className="text-xs text-gray-400 mt-1">
-                Không thể thay đổi chức vụ của chính mình.
+                {t("staffDetail.cannotChangeOwnRole")}
               </p>
             )}
           </div>
@@ -177,16 +179,16 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
             className="h-10 px-6 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-100 transition"
             onClick={() => setShowModal(false)}
           >
-            Đóng
+            {t("common.close")}
           </button>
           {isEditing ? (
             <div className="h-10 px-6 text-white bg-yellow-500 rounded-xl hover:bg-yellow-600 flex justify-center items-center transition">
               <Alert
-                open={isUpdating ? "Đang lưu..." : "Lưu lại"}
-                btn1="Hủy"
-                btn2="Lưu"
-                description="Lưu thay đổi thông tin nhân viên"
-                title="Bạn có chắc lưu không?"
+                open={isUpdating ? t("common.saving") : t("common.saveBtn")}
+                btn1={t("common.cancel")}
+                btn2={t("common.save")}
+                description={t("staffDetail.saveDesc")}
+                title={t("staffDetail.confirmSaveTitle")}
                 handleBtn2={handleSave}
                 handleBtn1={() => {}}
               />
@@ -196,7 +198,7 @@ const StaffDetail = ({ setShowModal, id }: StaffDetailProps) => {
               className="h-10 px-6 text-white bg-yellow-500 rounded-xl hover:bg-yellow-600 transition"
               onClick={() => setIsEditing(true)}
             >
-              Chỉnh sửa
+              {t("common.edit")}
             </button>
           )}
         </div>

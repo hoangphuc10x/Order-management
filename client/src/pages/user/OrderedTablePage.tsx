@@ -2,7 +2,12 @@ import Loading from "@/components/Loading";
 import { STATUS } from "@/enum/status";
 import { socket } from "@/provider/SocketProvider";
 import { addOrderId, clearOrder } from "@/redux/slices/orderCurrentSlice";
-import { useGetOreredQuery, useUpdateOrderMutation } from "@/service/orderApi";
+import {
+  useGetActiveOrderByUserAndTableQuery,
+  useUpdateOrderMutation,
+} from "@/service/orderApi";
+import { useTableInfo } from "@/hook/table";
+import { useUserInfo } from "@/hook/auth";
 import {
   ClipboardList,
   CookingPot,
@@ -11,15 +16,21 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const OrderedTablePage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
+  const { _id: tableId } = useTableInfo();
+  const { _id: userId } = useUserInfo();
   const [isCanceled, setIsCanceled] = useState(false);
-  const { data, isLoading, refetch, isSuccess, isError } = useGetOreredQuery(
-    id || ""
-  );
+  // Lấy đơn theo NGƯỜI và BÀN hiện tại (không dùng orderId cũ có thể bị lẫn bàn).
+  const { data, isLoading, refetch, isSuccess, isError } =
+    useGetActiveOrderByUserAndTableQuery(
+      { tableId: tableId || "", userId: userId || "" },
+      { skip: !tableId || !userId }
+    );
   const [updateOrder] = useUpdateOrderMutation();
   const dispatch = useDispatch();
 
@@ -68,7 +79,7 @@ const OrderedTablePage = () => {
       status: STATUS.BILL_REQUESTED,
     }).unwrap();
     if (res.success) {
-      toast.success("Đã gửi yêu cầu tính tiền");
+      toast.success(t("orderedTable.billRequested"));
     }
   };
   if (isLoading) return <Loading />;
@@ -77,9 +88,9 @@ const OrderedTablePage = () => {
     <div className="w-full">
       {isCanceled ? (
         <div className="flex gap-1">
-          <span>Đơn hàng đã bị hủy, xin mời bạn </span>
+          <span>{t("orderedTable.cancelled")}</span>
           <Link to="/menu" className="text-primary-100">
-            đặt lại !
+            {t("orderedTable.reorder")}
           </Link>
         </div>
       ) : (
@@ -87,15 +98,15 @@ const OrderedTablePage = () => {
           <div className="xl:w-[30vw] w-[70vw] flex flex-col items-center gap-2">
             {data?.order?.status === STATUS.PENDING ? (
               <span className="font-bold text-[3.5vw] lg:text-[1.7vw]">
-                Đang chờ xác nhận
+                {t("orderedTable.waitingConfirm")}
               </span>
             ) : data?.order?.status === STATUS.CONFIRMED ? (
               <span className="font-bold text-[3.5vw] lg:text-[1.7vw]">
-                Món ăn đang được chế biến
+                {t("orderedTable.cooking")}
               </span>
             ) : (
               <span className="font-bold text-[3.5vw] lg:text-[1.7vw]">
-                Cảm ơn quý khách
+                {t("orderedTable.thankYou")}
               </span>
             )}
 
@@ -156,7 +167,7 @@ const OrderedTablePage = () => {
           </div>
           <div className="flex flex-col xl:w-[50vw] gap-4 border-2 border-primary-100 p-2 rounded w-full ">
             <h3 className="font-bold text-[3vw] xl:text-[1.2vw] lg:text-[1.5vw] underline ">
-              Danh sách các món ăn đã đặt
+              {t("orderedTable.orderedList")}
             </h3>
             {data?.order.orderItems.map((item) => (
               <div
@@ -185,12 +196,12 @@ const OrderedTablePage = () => {
                           }`}
                         >
                           {item.status === STATUS.PENDING
-                            ? "Đang chờ"
+                            ? t("status.pending")
                             : item.status === STATUS.PROCESSING
-                            ? "Đang chế biến"
+                            ? t("status.processing")
                             : item.status === STATUS.COMPLETED
-                            ? "Đã xong"
-                            : "Đã phục vụ"}
+                            ? t("status.done")
+                            : t("status.served")}
                         </span>
                       </div>
                     </div>
@@ -209,8 +220,8 @@ const OrderedTablePage = () => {
             <div className="flex flex-col gap-2">
               <div className="w-full bg-primary-100 rounded px-2 py-1 flex justify-between xl:text-[1vw] text-[3vw] lg:text-[1.5vw]">
                 {data?.order?.status === "COMPLETED"
-                  ? "Tổng tiền"
-                  : "Tổng tiền tạm tính"}
+                  ? t("orderedTable.total")
+                  : t("orderedTable.subtotal")}
 
                 <span className="font-bold">
                   {Number(
@@ -228,7 +239,7 @@ const OrderedTablePage = () => {
                     data.order._id && handlePaymentRequest(data.order._id)
                   }
                 >
-                  Yêu cầu tính tiền
+                  {t("orderedTable.requestBill")}
                 </button>
               )}
             </div>

@@ -46,7 +46,7 @@ export default class OrderService {
 
   public async createOrUpdateOrder(
     data: any,
-    orderId?: string | undefined
+    _orderId?: string | undefined // không dùng nữa: đơn xác định theo (user, table)
   ): Promise<IOrder | null> {
     const session = await mongoose.startSession(); // Khởi tạo session
     session.startTransaction(); // Bắt đầu transaction
@@ -69,9 +69,17 @@ export default class OrderService {
 
       let newOrder: IOrder | null = null;
 
-      if (orderId) {
+      // Đơn hàng được xác định DUY NHẤT theo (userId, tableId). Không tin orderId
+      // từ client (tránh gộp nhầm món sang bàn cũ). Nếu khách đã có đơn đang hoạt
+      // động tại bàn này -> thêm món; nếu chưa -> tạo đơn mới (quét bàn khác = đơn mới).
+      const activeOrder = await this.orderRepository.findActiveByTableAndUser(
+        tableId,
+        userId
+      );
+
+      if (activeOrder) {
         newOrder = await this.updateExistingOrder(
-          orderId,
+          (activeOrder._id as any).toString(),
           updatedOrderItems,
           sumPrice,
           tableId,
@@ -466,8 +474,9 @@ export default class OrderService {
     if (!userExists) {
       throw new Error("User not found");
     }
-    if (!tableExists || tableExists.status !== TableStatus.AVAILABLE) {
-      console.warn("Table not available:", tableId);
+    // Cho phép nhiều khách cùng 1 bàn: chỉ cần bàn tồn tại (không bắt buộc AVAILABLE).
+    if (!tableExists) {
+      console.warn("Table not found:", tableId);
       throw new Error("Table not found");
     }
 
@@ -477,7 +486,8 @@ export default class OrderService {
         tableId,
         totalPrice: sumPrice,
         tableName: tableExists.tableNumber,
-        userName: userExists.username,
+        // Hiển thị tên khách cho nhân viên chọn (guest có fulname khi đăng ký).
+        userName: userExists.fulname || userExists.username,
         status: TableOrderStatus.PENDING,
         orderItems: updatedOrderItems,
       } as IOrder,
@@ -564,6 +574,19 @@ export default class OrderService {
       console.error(`❌ Error fetching order by tableId: ${error.message}`);
       throw new Error(`Error fetching order by tableId: ${error.message}`);
     }
+  }
+
+  // Đơn đang hoạt động của 1 khách tại 1 bàn (cho trang "đã đặt" của khách)
+  public async getActiveOrderByUserAndTable(
+    tableId: string,
+    userId: string
+  ): Promise<IOrder | null> {
+    return await this.orderRepository.findActiveByTableAndUser(tableId, userId);
+  }
+
+  // Tất cả đơn đang hoạt động của 1 bàn (cho nhân viên chọn theo tên khách)
+  public async getActiveOrdersByTable(tableId: string): Promise<IOrder[]> {
+    return await this.orderRepository.findActiveOrdersByTable(tableId);
   }
 
   // Lấy đơn hàng theo ID table
@@ -692,6 +715,37 @@ export default class OrderService {
     });
   }
 
+  // Chỉ trả bàn về AVAILABLE khi không còn đơn nào đang hoạt động (nhiều khách/bàn).
+  private async freeTableIfNoActiveOrders(
+    tableId: string,
+    currentOrderId: any,
+    session: any
+  ): Promise<void> {
+    const activeOrders = await this.orderRepository.findActiveOrdersByTable(
+      tableId,
+      session
+    );
+    const stillActive = activeOrders.filter(
+      (o) => (o._id as any).toString() !== (currentOrderId as any).toString()
+    );
+
+    if (stillActive.length > 0) {
+      // Vẫn còn khách khác tại bàn -> giữ OCCUPIED.
+      return;
+    }
+
+    await this.tableRepository.updateTableStatus(
+      tableId,
+      TableStatus.AVAILABLE,
+      session
+    );
+    const io = getIo();
+    io?.emit("tableStatusChanged", {
+      tableId,
+      status: TableStatus.AVAILABLE,
+    });
+  }
+
   // Hàm xử lý đơn hàng khi trạng thái là CANCELLED
   private async handleCancelledOrder(
     updatedOrder: any,
@@ -703,18 +757,7 @@ export default class OrderService {
       { session }
     );
 
-    const updatedTableStatus = TableStatus.AVAILABLE;
-    await this.tableRepository.updateTableStatus(
-      tableId,
-      updatedTableStatus,
-      session
-    );
-
-    let io = getIo();
-    io?.emit("tableStatusChanged", {
-      tableId,
-      status: updatedTableStatus,
-    });
+    await this.freeTableIfNoActiveOrders(tableId, updatedOrder._id, session);
   }
 
   // Hàm xử lý đơn hàng khi trạng thái là COMPLETED
@@ -728,19 +771,9 @@ export default class OrderService {
     await updatedOrder.save({ session });
     await this.updateRevenue(updatedOrder); // Cập nhật doanh thu cho đơn hàng
 
-    const updatedTableStatus = TableStatus.AVAILABLE;
-    await this.tableRepository.updateTableStatus(
-      tableId,
-      updatedTableStatus,
-      session
-    );
+    await this.freeTableIfNoActiveOrders(tableId, updatedOrder._id, session);
 
-    let io = getIo();
-    io?.emit("tableStatusChanged", {
-      tableId,
-      status: updatedTableStatus,
-    });
-
+    const io = getIo();
     io?.emit("orderStatusChanged", {
       orderId: updatedOrder._id,
       status: updatedOrder.status,

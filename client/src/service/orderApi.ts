@@ -20,6 +20,8 @@ interface GetPrice {
 export interface Order {
   tableId: string;
   userId: string;
+  userName?: string;
+  tableName?: string;
   orderId?: string;
   totalPrice: number | GetPrice;
   status?:
@@ -92,6 +94,23 @@ export const orderApi = rootApi.injectEndpoints({
         query: (id) => `/orders/ordered/user/${id}`,
         providesTags: [{ type: "ORDER" }],
       }),
+      // Đơn đang hoạt động của 1 khách tại 1 bàn (trang "đã đặt" của khách)
+      getActiveOrderByUserAndTable: builder.query<
+        OrderedOfTable,
+        { tableId: string; userId: string }
+      >({
+        query: ({ tableId, userId }) =>
+          `/orders/ordered/table/${tableId}/user/${userId}`,
+        providesTags: [{ type: "ORDER" }],
+      }),
+      // Tất cả đơn đang hoạt động của 1 bàn (nhân viên chọn theo tên khách)
+      getActiveOrdersByTable: builder.query<
+        { success: boolean; orders: Order[] },
+        string
+      >({
+        query: (tableId) => `/orders/ordered/table/${tableId}/all`,
+        providesTags: [{ type: "ORDER" }],
+      }),
       updateOrder: builder.mutation<
         OrderResponse,
         { id: string; status: string }
@@ -124,5 +143,7 @@ export const {
   useUpdateOrderMutation,
   useGetOreredByUserIdQuery,
   useGetOreredOfTableQuery,
+  useGetActiveOrderByUserAndTableQuery,
+  useGetActiveOrdersByTableQuery,
   useUpdateItemOrderMutation,
 } = orderApi;

@@ -3,8 +3,10 @@ import { socket } from "@/provider/SocketProvider";
 import {
   OrderItem,
   useGetItemByCategoryIdQuery,
+  useGetMyKitchenItemsQuery,
   useUpdateOrderStatusMutation,
 } from "@/service/kitchenApi";
+import { useUserInfo } from "@/hook/auth";
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -20,8 +22,10 @@ import CheckTable from "@/components/chef/CheckTable";
 import SelectChef from "@/components/chef/SelectChef";
 import { STATUS } from "@/enum/status";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const SortFood = () => {
+  const { t } = useTranslation();
   const { id, category } = useParams();
   const [isPenđing, setIsPending] = useState("PENDING");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,12 +33,23 @@ const SortFood = () => {
   const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
   const [status, setStatus] = useState("PENDING");
   const [itemId, setItemId] = useState("");
-  const { data, isLoading, refetch } = useGetItemByCategoryIdQuery({
-    id: id || "",
-  });
-  const [updateOrderItem] = useUpdateOrderStatusMutation();
+  const { role } = useUserInfo();
+  const isChef = role === "chef";
 
-  console.log("data line 21", data);
+  // Bếp trưởng/quản lý lấy theo danh mục; đầu bếp lấy món được giao rồi lọc theo danh mục.
+  const categoryQuery = useGetItemByCategoryIdQuery(
+    { id: id || "" },
+    { skip: isChef }
+  );
+  const myQuery = useGetMyKitchenItemsQuery(undefined, { skip: !isChef });
+
+  const isLoading = isChef ? myQuery.isLoading : categoryQuery.isLoading;
+  const refetch = isChef ? myQuery.refetch : categoryQuery.refetch;
+  const items: OrderItem[] = isChef
+    ? (myQuery.data?.result ?? []).filter((o) => o.categoryId === id)
+    : categoryQuery.data ?? [];
+
+  const [updateOrderItem] = useUpdateOrderStatusMutation();
 
   useEffect(() => {
     socket.on("tableStatusChanged", (data) => {
@@ -45,6 +60,11 @@ const SortFood = () => {
     });
     socket.on("kitchenStatusUpdated", (data) => {
       console.log("kitchenStatusUpdated");
+      if (data) {
+        refetch();
+      }
+    });
+    socket.on("chefAssigned", (data) => {
       if (data) {
         refetch();
       }
@@ -70,11 +90,12 @@ const SortFood = () => {
     return () => {
       socket.off("tableStatusChanged");
       socket.off("kitchenStatusUpdated");
+      socket.off("chefAssigned");
       socket.off("orderStatusChanged");
       socket.off("orderItemStatusUpdated");
       socket.off("orderUpdated");
     };
-  }, []);
+  }, [refetch]);
 
   if (isLoading) {
     return <Loading />;
@@ -88,7 +109,7 @@ const SortFood = () => {
         status,
         orderItemIds,
       }).unwrap();
-      toast.success("Cập nhật trạng thái món thành công");
+      toast.success(t("chef.updateStatusSuccess"));
     } catch (error) {
       console.error("Error updating order status", error);
     }
@@ -115,13 +136,13 @@ const SortFood = () => {
             onClick={() => setIsPending("PENDING")}
             className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none transition transform hover:scale-105 active:bg-yellow-700 border "
           >
-            Món đợi xử lý
+            {t("chef.pendingFilter")}
           </button>
           <button
             onClick={() => setIsPending("PROCESSING")}
             className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none transition transform hover:scale-105 active:bg-green-700 border "
           >
-            Món đang làm
+            {t("chef.cookingFilter")}
           </button>
         </div>
       </div>
@@ -129,27 +150,32 @@ const SortFood = () => {
         <Table className="w-full">
           <TableHeader className="text-sm text-black">
             <TableRow>
-              <TableHead className="p-2 w-[5%] text-center">STT</TableHead>
+              <TableHead className="p-2 w-[5%] text-center">{t("table.stt")}</TableHead>
               <TableHead className="p-2 w-[25%] text-center">
-                Tên món ăn
+                {t("table.dishName")}
               </TableHead>
               <TableHead className="p-2 w-[15%] text-center">
-                Số lượng món
+                {t("table.quantityDish")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Thời gian cập nhật
+                {t("table.updateTime")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Trạng thái
+                {t("table.status")}
               </TableHead>
+              {!isChef && (
+                <TableHead className="p-2 w-[10%] text-center">
+                  {t("chef.chefName")}
+                </TableHead>
+              )}
               <TableHead className="p-2 w-[10%] text-center">
-                Chức năng
+                {t("table.actions")}
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data
-              ?.filter((order) => order.status === isPenđing)
+            {items
+              .filter((order) => order.status === isPenđing)
               .map((order, index) => (
                 <TableRow key={index} className="font-medium">
                   <TableCell className="p-2 text-center">{index + 1}</TableCell>
@@ -164,39 +190,65 @@ const SortFood = () => {
                   </TableCell>
                   <TableCell className="p-2 text-center">
                     {order.status === "PENDING" ? (
-                      <span className="text-yellow-500">Chờ xử lý</span>
+                      <span className="text-yellow-500">{t("status.waiting")}</span>
                     ) : order.status === "PROCESSING" ? (
-                      <span className="text-green-700">Đang chế biến</span>
+                      <span className="text-green-700">{t("status.processing")}</span>
                     ) : (
-                      <span className="text-blue-600">Đã hoàn thành</span>
+                      <span className="text-blue-600">{t("status.completed")}</span>
                     )}
                   </TableCell>
+                  {!isChef && (
+                    <TableCell className="p-2 text-center">
+                      {order.fulname ? (
+                        <span className="text-primary-100">{order.fulname}</span>
+                      ) : (
+                        <span className="text-slate-400 italic">
+                          {t("chef.notAssigned")}
+                        </span>
+                      )}
+                    </TableCell>
+                  )}
                   <TableCell className="p-2 text-center">
                     <div className="flex gap-2 justify-center items-center">
                       <button
                         onClick={() => handleModalToggle(order)}
                         className="bg-blue-500 hover:bg-blue-800 text-white px-3 py-1 rounded-xl whitespace-nowrap"
                       >
-                        Xem bàn
+                        {t("chef.viewTable")}
                       </button>
-                      {isPenđing === STATUS.PENDING ? (
-                        <button
-                          onClick={() => handleModalAllChef(order)}
-                          className="bg-primary-100 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
-                        >
-                          Chọn đầu bếp
-                        </button>
+                      {isChef ? (
+                        isPenđing === STATUS.PENDING ? (
+                          <button
+                            onClick={() =>
+                              handleUpdateOrderStatus(STATUS.PROCESSING, [
+                                order.orderItemId,
+                              ])
+                            }
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                          >
+                            {t("chef.startCooking")}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleUpdateOrderStatus(STATUS.COMPLETED, [
+                                order.orderItemId,
+                              ])
+                            }
+                            className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                          >
+                            {t("common.complete")}
+                          </button>
+                        )
                       ) : (
-                        <button
-                          onClick={() =>
-                            handleUpdateOrderStatus(STATUS.COMPLETED, [
-                              order.orderItemId,
-                            ])
-                          }
-                          className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
-                        >
-                          Hoàn thành
-                        </button>
+                        isPenđing === STATUS.PENDING && (
+                          <button
+                            onClick={() => handleModalAllChef(order)}
+                            className="bg-primary-100 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                          >
+                            {t("chef.selectChefBtn")}
+                          </button>
+                        )
                       )}
                     </div>
                   </TableCell>

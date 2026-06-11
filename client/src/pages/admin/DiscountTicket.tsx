@@ -19,9 +19,11 @@ import {
 import dayjs from "dayjs";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 const DiscountTicket = () => {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [discounts, setDiscounts] = useState<Discount[]>([]);
@@ -47,18 +49,18 @@ const DiscountTicket = () => {
     const res = await deleteDiscount({ id });
     if (res.data?.success) {
       refetch();
-      toast.success("Xóa thành công");
+      toast.success(t("discount.deleteSuccess"));
     } else {
-      toast.error("Xóa thất bại");
+      toast.error(t("discount.deleteFail"));
     }
   };
   const handleUpdate = async (id: string, active: boolean) => {
     const res = await updateDiscount({ id, active: !active });
     if (res.data?.success) {
       refetch();
-      toast.success("Thành công");
+      toast.success(t("discount.updateSuccess"));
     } else {
-      toast.error("Thất bại");
+      toast.error(t("discount.updateFail"));
     }
   };
   if (isLoading) {
@@ -67,13 +69,13 @@ const DiscountTicket = () => {
   return (
     <div className="w-full h-full">
       <div className="h-16 flex w-full justify-between items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
-        <h3 className="text-white font-bold text-xl">Quản lý mã giảm giá</h3>
+        <h3 className="text-white font-bold text-xl">{t("discount.title")}</h3>
         <button
           className="flex gap-1 py-1 px-3 items-center text-white border bg-primary-100 hover:bg-yellow-400 border-[#6D28D9] rounded-xl"
           onClick={() => setShowForm(true)}
         >
           <Plus size={20} />
-          Tạo mã
+          {t("discount.createTitle")}
         </button>
       </div>
 
@@ -81,19 +83,19 @@ const DiscountTicket = () => {
         <Table className="w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center w-[10%]">Mã</TableHead>
+              <TableHead className="text-center w-[10%]">{t("discount.code")}</TableHead>
               <TableHead className="text-center w-[10%]">
-                {` Giá trị (VNĐ/%)`}{" "}
+                {t("discount.valueHeader")}{" "}
               </TableHead>
-              <TableHead className="text-center w-[10%]">Tối thiểu</TableHead>
-              <TableHead className="text-center w-[10%]">Giảm tối đa</TableHead>
+              <TableHead className="text-center w-[10%]">{t("discount.min")}</TableHead>
+              <TableHead className="text-center w-[10%]">{t("discount.maxDiscount")}</TableHead>
               <TableHead className="text-center w-[15%]">
-                Thời gian tạo
+                {t("discount.createdAt")}
               </TableHead>
-              <TableHead className="text-center w-[15%]">Hạn sử dụng</TableHead>
-              <TableHead className="text-center w-[10%]">Số lượng</TableHead>
-              <TableHead className="text-center w-[10%]">Còn lại</TableHead>
-              <TableHead className="text-center w-[10%]">Chức năng</TableHead>
+              <TableHead className="text-center w-[15%]">{t("discount.expiry")}</TableHead>
+              <TableHead className="text-center w-[10%]">{t("table.quantity")}</TableHead>
+              <TableHead className="text-center w-[10%]">{t("discount.remaining")}</TableHead>
+              <TableHead className="text-center w-[10%]">{t("table.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -109,7 +111,7 @@ const DiscountTicket = () => {
                   {dayjs(dis.startDate).format("DD/MM/YYYY")}
                 </TableCell>
                 <TableCell>{dayjs(dis.endDate).format("DD/MM/YYYY")}</TableCell>
-                <TableCell>{dis.usageLimit === null ? "Không giới hạn" : dis.usageLimit}</TableCell>
+                <TableCell>{dis.usageLimit === null ? t("discount.unlimited") : dis.usageLimit}</TableCell>
                 <TableCell>
                   {Number(dis.usageLimit) - Number(dis.usedCount)}
                 </TableCell>
@@ -120,10 +122,10 @@ const DiscountTicket = () => {
                     }`}
                   >
                     <Alert
-                      btn1="Hủy"
-                      btn2={dis.active ? "Tắt" : "Bật"}
-                      title={dis.active ? "Tắt mã giảm giá" : "Bật mã giảm giá"}
-                      open={dis.active ? "Tắt" : "Bật"}
+                      btn1={t("common.cancel")}
+                      btn2={dis.active ? t("discount.turnOff") : t("discount.turnOn")}
+                      title={dis.active ? t("discount.turnOffTitle") : t("discount.turnOnTitle")}
+                      open={dis.active ? t("discount.turnOff") : t("discount.turnOn")}
                       handleBtn2={() =>
                         handleUpdate(dis._id as string, dis.active as boolean)
                       }
@@ -132,12 +134,12 @@ const DiscountTicket = () => {
                   </div>
                   <div className="flex items-center gap-1 bg-[#ACACAC] hover:bg-slate-500 text-white px-2 py-1 rounded-2xl">
                     <Alert
-                      btn1="Hủy"
-                      btn2="Xóa"
-                      description="Xóa mã giảm giá khỏi dữ liệu của nhà hàng"
-                      title="Bạn có chắc chắn xóa không?"
+                      btn1={t("common.cancel")}
+                      btn2={t("common.delete")}
+                      description={t("discount.deleteDesc")}
+                      title={t("common.confirmDelete")}
                       Icon={Trash2}
-                      hover="Xóa"
+                      hover={t("common.delete")}
                       handleBtn2={() => handleDelete(dis._id as string)}
                       handleBtn1={() => {}}
                     />

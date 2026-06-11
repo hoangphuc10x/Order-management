@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { useUploadImageMutation } from "@/service/menuItemApi"; // API upload ảnh
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const ImageUpload = ({
   imageUrl,
@@ -10,6 +11,7 @@ const ImageUpload = ({
   imageUrl: string;
   setImageUrl: (url: string) => void;
 }) => {
+  const { t } = useTranslation();
   const [uploadImage] = useUploadImageMutation();
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -22,15 +24,15 @@ const ImageUpload = ({
       try {
         const response = await uploadImage(formData).unwrap();
         if (!response.success) {
-          toast.error("Lỗi khi tải ảnh");
+          toast.error(t("imageUpload.uploadError"));
           return;
         }else{
-            toast.success("Tải ảnh thành công");
+            toast.success(t("imageUpload.uploadSuccess"));
         }
         setImageUrl(response.urlImages[0]);
       } catch (error) {
         console.error("Lỗi khi upload ảnh:", error);
-        toast.error("Lỗi khi upload ảnh");
+        toast.error(t("imageUpload.uploadFail"));
       }
     },
     [uploadImage, setImageUrl]
@@ -53,14 +55,14 @@ const ImageUpload = ({
         <div className="mt-2">
           <img
             src={imageUrl}
-            alt="Ảnh món ăn"
+            alt={t("foodDetail.imageAlt")}
             className="size-[200px] object-cover rounded-lg border border-gray-300"
           />
           <button
             onClick={() => setImageUrl("")}
             className="text-red-500 font-bold mt-2"
           >
-            Xóa ảnh
+            {t("misc.removeImage")}
           </button>
         </div>
       ) : (
@@ -72,9 +74,9 @@ const ImageUpload = ({
         >
           <input {...getInputProps()} />
           {isDragActive ? (
-            <p>Thả ảnh vào đây...</p>
+            <p>{t("imageUpload.dropHere")}</p>
           ) : (
-            <p>Chọn ảnh</p>
+            <p>{t("imageUpload.selectImage")}</p>
           )}
         </div>
       )}

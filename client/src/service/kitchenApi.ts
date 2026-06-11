@@ -15,6 +15,8 @@ export interface OrderItem {
   categoryId?: string;
   categoryName?: string;
   difficultyLevel?: number;
+  userId?: string;
+  fulname?: string;
   __v?: number;
 }
 
@@ -60,6 +62,12 @@ export const kitchenApi = rootApi.injectEndpoints({
     return {
       getAllOrderForKitchen: builder.query<ApiResponse, void>({
         query: () => "/kitchens/get-all",
+        providesTags: [{ type: "CHEF" }],
+      }),
+
+      // Món được giao cho chính đầu bếp đang đăng nhập (lấy theo token)
+      getMyKitchenItems: builder.query<ApiResponse, void>({
+        query: () => "/kitchens/my-items",
         providesTags: [{ type: "CHEF" }],
       }),
 
@@ -134,6 +142,7 @@ export const kitchenApi = rootApi.injectEndpoints({
 
 export const {
   useGetAllOrderForKitchenQuery,
+  useGetMyKitchenItemsQuery,
   useUpdateOrderStatusMutation,
   useUpdateOrderItemStatusMutation,
   useGetAllOrderDiplicateQuery,

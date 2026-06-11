@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -11,20 +12,25 @@ import { useDispatch } from "react-redux";
 import { login } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
 
-const formSchema = yup.object().shape({
-  usernameOrEmail: yup
-    .string()
-    .required("Vui lòng nhập email hoặc username")
-    .matches(/^\S+$/, "Không được chứa khoảng trắng"),
-  password: yup
-    .string()
-    .required("Vui lòng nhập mật khẩu")
-    .matches(/^\S+$/, "Không được chứa khoảng trắng"),
-});
-
 const LoginPage: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const formSchema = useMemo(
+    () =>
+      yup.object().shape({
+        usernameOrEmail: yup
+          .string()
+          .required(t("auth.emailOrUsernameRequired"))
+          .matches(/^\S+$/, t("auth.noWhitespace")),
+        password: yup
+          .string()
+          .required(t("auth.passwordRequired"))
+          .matches(/^\S+$/, t("auth.noWhitespace")),
+      }),
+    [t]
+  );
 
   const [loginMutation, { isSuccess, data, error, isError }] =
     useLoginMutation();
@@ -33,7 +39,7 @@ const LoginPage: React.FC = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<yup.InferType<typeof formSchema>>({
+  } = useForm<LoginFormData>({
     resolver: yupResolver(formSchema),
     defaultValues: {
       usernameOrEmail: "",
@@ -60,7 +66,7 @@ const LoginPage: React.FC = () => {
           refreshToken: data.refreshToken,
         })
       );
-      toast.success("Đăng nhập thành công!");
+      toast.success(t("auth.loginSuccess"));
       if (data.user.role === "manager") {
         navigate("/dashboard");
       } else if (data.user.role === "staff") {
@@ -73,12 +79,12 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (error && "status" in error && error.status === 404) {
-      toast.error("Tên đặng nhập hoặc Email hoặc mật khẩu không đúng!");
+      toast.error(t("auth.loginFail"));
     }
   }, [isError]);
   return (
     <div className="flex flex-col items-center justify-center absolute h-fit top-5 left-0 w-full px-6 sm:w-[496px] sm:left-32 sm:top-14 sm:px-0">
-      <p className="text-3xl font-bold mb-12 mt-7 text-white ">Đăng Nhập</p>
+      <p className="text-3xl font-bold mb-12 mt-7 text-white ">{t("auth.loginTitle")}</p>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         {/* <div className="mb-8 w-full h-14">
           <div className="relative w-full h-12">
@@ -108,7 +114,7 @@ const LoginPage: React.FC = () => {
           error={errors.usernameOrEmail}
           control={control}
           type="text"
-          placeholder="Email hoặc tên đăng nhập"
+          placeholder={t("auth.usernameOrEmail")}
         />
         <FormField<LoginFormData>
           className="mb-4"
@@ -117,14 +123,14 @@ const LoginPage: React.FC = () => {
           error={errors.password}
           control={control}
           type="password"
-          placeholder="Mật khẩu"
+          placeholder={t("auth.password")}
         />
         <div className="text-right  mb-7">
           <a
             href="#"
             className="text-gray-200 hover:text-white hover:underline"
           >
-            Quên mật khẩu?
+            {t("auth.forgotPassword")}
           </a>
         </div>
 
@@ -132,24 +138,24 @@ const LoginPage: React.FC = () => {
           type="submit"
           className="w-full py-3 text-white font-semibold bg-gradient-to-r from-primary-100 to-primary-400 rounded-lg hover:opacity-90 shadow-md transition-opacity"
         >
-          Đăng nhập
+          {t("auth.loginBtn")}
         </button>
       </form>
       <Link
         to="/register/admin"
         className="text-xl text-gray-200 hover:text-white my-7 "
       >
-        Đăng ký tài khoản
+        {t("auth.goRegister")}
       </Link>
       <span className="text-sm text-gray-300 mb-7">
-        Liên kết tài khoản của bạn để tiếp tục sử dụng dịch vụ
+        {t("auth.linkAccount")}
       </span>
       <Link
         to=""
         className="w-full bg-white rounded-lg py-2 text-primary gap-2 justify-center flex border-2 border-yellow-400 "
       >
         <Google />
-        Tiếp tục với Google
+        {t("auth.continueGoogle")}
       </Link>
     </div>
   );

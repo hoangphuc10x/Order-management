@@ -17,8 +17,10 @@ import { socket } from "@/provider/SocketProvider";
 import CheckTable from "@/components/chef/CheckTable";
 import SelectChef from "@/components/chef/SelectChef";
 import { STATUS } from "@/enum/status";
+import { useTranslation } from "react-i18next";
 
 const DuplicateFood = () => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenChef, setIsModalOpenChef] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Item | null>(null);
@@ -94,19 +96,19 @@ const DuplicateFood = () => {
   return (
     <div className="flex flex-col flex-1 h-full">
       <div className="h-16 flex w-full items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
-        <h3 className="text-white font-bold text-xl">Món ăn trùng lặp</h3>
+        <h3 className="text-white font-bold text-xl">{t("chef.duplicateTitle")}</h3>
         <div className="ml-auto flex gap-2">
           <button
             onClick={() => setIsPending("PENDING")}
             className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none transition transform hover:scale-105 active:bg-yellow-700 border "
           >
-            Món đợi xử lý
+            {t("chef.pendingFilter")}
           </button>
           <button
             onClick={() => setIsPending("PROCESSING")}
             className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none transition transform hover:scale-105 active:bg-green-700 border "
           >
-            Món đang làm
+            {t("chef.cookingFilter")}
           </button>
         </div>
       </div>
@@ -114,21 +116,21 @@ const DuplicateFood = () => {
         <Table className="w-full">
           <TableHeader className="text-sm text-black">
             <TableRow>
-              <TableHead className="p-2 w-[5%] text-center">STT</TableHead>
+              <TableHead className="p-2 w-[5%] text-center">{t("table.stt")}</TableHead>
               <TableHead className="p-2 w-[25%] text-center">
-                Tên món ăn
+                {t("table.dishName")}
               </TableHead>
               <TableHead className="p-2 w-[15%] text-center">
-                Số lượng món
+                {t("table.quantityDish")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Thời gian cập nhật
+                {t("table.updateTime")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Trạng thái
+                {t("table.status")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Chức năng
+                {t("table.actions")}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -149,11 +151,11 @@ const DuplicateFood = () => {
                   </TableCell>
                   <TableCell className="p-2 text-center">
                     {order.status === STATUS.PENDING ? (
-                      <span className="text-yellow-500">Chờ xử lý</span>
+                      <span className="text-yellow-500">{t("status.waiting")}</span>
                     ) : order.status === STATUS.PROCESSING ? (
-                      <span className="text-green-700">Đang chế biến</span>
+                      <span className="text-green-700">{t("status.processing")}</span>
                     ) : (
-                      <span className="text-blue-600">Đã hoàn thành</span>
+                      <span className="text-blue-600">{t("status.completed")}</span>
                     )}
                   </TableCell>
                   <TableCell className="p-2 text-center">
@@ -162,14 +164,14 @@ const DuplicateFood = () => {
                         onClick={() => handleModalToggle(order)}
                         className="bg-blue-500 hover:bg-blue-800 text-white px-3 py-1 rounded-xl whitespace-nowrap"
                       >
-                        Xem bàn
+                        {t("chef.viewTable")}
                       </button>
                       {isPenđing === STATUS.PENDING ? (
                         <button
                           onClick={() => handleModalAllChef(order)}
                           className="bg-primary-100 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
                         >
-                          Chọn đầu bếp
+                          {t("chef.selectChefBtn")}
                         </button>
                       ) : (
                         <button
@@ -181,7 +183,7 @@ const DuplicateFood = () => {
                           }
                           className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
                         >
-                          Hoàn thành
+                          {t("common.complete")}
                         </button>
                       )}
                     </div>

@@ -30,7 +30,7 @@ export default class AuthenService {
 
   static generateRefreshToken(user: IUser): string {
     return jwt.sign({ id: user._id, role: user.role }, REFRESH_SECRET_KEY, {
-      expiresIn: "7d", // Refresh token valid for 7 days
+      expiresIn: "1d", // Refresh token valid for 1 day
     });
   }
 

@@ -1,20 +1,41 @@
 import CartIcon from "@/icons/CartIcon";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
+import { logout } from "@/redux/slices/authSlice";
 import Logo from "@/icons/Logo";
 import { useUserInfo } from "@/hook/auth";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { LogOut } from "lucide-react";
+import { toast } from "sonner";
 
 const UserLayout = () => {
   const quantity = useSelector(
     (state: RootState) => state.orderItem.items.length
   );
+  const tableSlug = useSelector(
+    (state: RootState) => state.table.tableInfo.slug
+  );
   const location = useLocation();
   const { role, _id } = useUserInfo();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Guest: quay lại đúng route như vừa được quét QR ở bàn (/:slug/check)
+    if (role === "guest" && tableSlug) {
+      navigate(`/${tableSlug}/check`);
+    } else {
+      navigate("/");
+    }
+    toast.success(t("common.logout"));
+    setTimeout(() => {
+      dispatch(logout());
+    }, 500);
+  };
 
   return (
     <>
@@ -100,7 +121,7 @@ const UserLayout = () => {
             {role === "manager" && (
               <Link
                 to="/dashboard"
-                className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1 text-sm transition-colors whitespace-nowrap hidden sm:block"
+                className="bg-white/20 hover:bg-white/30 rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm transition-colors whitespace-nowrap"
               >
                 {t("nav.dashboard")}
               </Link>
@@ -108,7 +129,7 @@ const UserLayout = () => {
             {role === "staff" && (
               <Link
                 to="/staff/show-table"
-                className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1 text-sm transition-colors whitespace-nowrap hidden sm:block"
+                className="bg-white/20 hover:bg-white/30 rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm transition-colors whitespace-nowrap"
               >
                 {t("nav.staff")}
               </Link>
@@ -116,10 +137,19 @@ const UserLayout = () => {
             {(role === "chef" || role === "chef_head") && (
               <Link
                 to="/chef/confirm-order"
-                className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1 text-sm transition-colors whitespace-nowrap hidden sm:block"
+                className="bg-white/20 hover:bg-white/30 rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm transition-colors whitespace-nowrap"
               >
                 {t("nav.kitchen")}
               </Link>
+            )}
+            {(role === "user" || role === "guest") && (
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1 bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1 text-sm transition-colors whitespace-nowrap"
+              >
+                <LogOut size={16} />
+                <span className="hidden sm:inline">{t("common.logout")}</span>
+              </button>
             )}
           </div>
         </div>

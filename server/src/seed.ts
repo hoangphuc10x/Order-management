@@ -67,6 +67,14 @@ const USERS: SeedUser[] = [
     status: "STANDBY",
   },
   // 2 chef
+    {
+    fulname: "Đầu Bếp trưởng",
+    username: "chef head",
+    email: "chefhead@forder.local",
+    phone: "0900000020",
+    role: RoleStatus.chef_head,
+    status: "STANDBY",
+  },
   {
     fulname: "Đầu Bếp 1",
     username: "chef1",
@@ -83,6 +91,22 @@ const USERS: SeedUser[] = [
     role: RoleStatus.chef,
     status: "STANDBY",
   },
+    {
+    fulname: "Đầu Bếp 3",
+    username: "chef3",
+    email: "chef3@forder.local",
+    phone: "0900000023",
+    role: RoleStatus.chef,
+    status: "STANDBY",
+  },
+  {
+    fulname: "Đầu Bếp 4",
+    username: "chef4",
+    email: "chef4@forder.local",
+    phone: "0900000024",
+    role: RoleStatus.chef,
+    status: "STANDBY",
+  },
 ];
 
 type SeedCategory = {
@@ -91,10 +115,10 @@ type SeedCategory = {
 };
 
 const CATEGORIES: SeedCategory[] = [
-  { name: "Khai vị", description: "Các món khai vị" },
-  { name: "Món chính", description: "Các món ăn chính" },
-  { name: "Đồ uống", description: "Nước uống các loại" },
-  { name: "Tráng miệng", description: "Món tráng miệng" },
+  { name: "Appetizers", description: "Appetizer dishes" },
+  { name: "Main Dishes", description: "Main course dishes" },
+  { name: "Beverages", description: "Drinks of all kinds" },
+  { name: "Desserts", description: "Dessert dishes" },
 ];
 
 type SeedMenuItem = {
@@ -103,29 +127,33 @@ type SeedMenuItem = {
   price: number; // VND
   category: string; // category name
   difficultyLevel: number; // 1-5
+  imageUrl: string;
 };
 
+const img = (keyword: string, lock: number) =>
+  `https://loremflickr.com/600/400/${keyword}?lock=${lock}`;
+
 const MENU_ITEMS: SeedMenuItem[] = [
-  // Khai vị
-  { name: "Gỏi cuốn tôm thịt", description: "Gỏi cuốn tươi kèm nước chấm", price: 35000, category: "Khai vị", difficultyLevel: 2 },
-  { name: "Chả giò", description: "Chả giò chiên giòn", price: 45000, category: "Khai vị", difficultyLevel: 2 },
-  { name: "Súp cua", description: "Súp cua trứng bắc thảo", price: 50000, category: "Khai vị", difficultyLevel: 2 },
+  // Appetizers
+  { name: "Fresh Spring Rolls", description: "Fresh rice paper rolls with shrimp and pork, served with dipping sauce", price: 35000, category: "Appetizers", difficultyLevel: 2, imageUrl: img("spring,rolls", 11) },
+  { name: "Fried Spring Rolls", description: "Crispy deep-fried spring rolls", price: 45000, category: "Appetizers", difficultyLevel: 2, imageUrl: img("fried,spring,rolls", 12) },
+  { name: "Crab Soup", description: "Crab meat soup with century egg", price: 50000, category: "Appetizers", difficultyLevel: 2, imageUrl: img("crab,soup", 13) },
 
-  // Món chính
-  { name: "Phở bò", description: "Phở bò tái nạm gầu", price: 65000, category: "Món chính", difficultyLevel: 3 },
-  { name: "Cơm tấm sườn bì chả", description: "Cơm tấm sườn nướng đầy đủ", price: 60000, category: "Món chính", difficultyLevel: 3 },
-  { name: "Bún chả Hà Nội", description: "Bún chả thịt nướng", price: 55000, category: "Món chính", difficultyLevel: 3 },
-  { name: "Mì xào hải sản", description: "Mì xào tôm mực", price: 70000, category: "Món chính", difficultyLevel: 3 },
-  { name: "Gà nướng mật ong", description: "1/4 con gà nướng mật ong", price: 85000, category: "Món chính", difficultyLevel: 4 },
+  // Main Dishes
+  { name: "Beef Pho", description: "Vietnamese beef noodle soup with rare beef and brisket", price: 65000, category: "Main Dishes", difficultyLevel: 3, imageUrl: img("pho,noodle", 14) },
+  { name: "Broken Rice with Grilled Pork", description: "Broken rice with grilled pork chop, shredded pork skin and egg meatloaf", price: 60000, category: "Main Dishes", difficultyLevel: 3, imageUrl: img("rice,pork", 15) },
+  { name: "Hanoi Bun Cha", description: "Grilled pork with vermicelli noodles", price: 55000, category: "Main Dishes", difficultyLevel: 3, imageUrl: img("grilled,pork,noodle", 16) },
+  { name: "Stir-fried Seafood Noodles", description: "Stir-fried noodles with shrimp and squid", price: 70000, category: "Main Dishes", difficultyLevel: 3, imageUrl: img("seafood,noodles", 17) },
+  { name: "Honey Grilled Chicken", description: "Quarter chicken grilled with honey", price: 85000, category: "Main Dishes", difficultyLevel: 4, imageUrl: img("grilled,chicken", 18) },
 
-  // Đồ uống
-  { name: "Trà đào cam sả", description: "Trà đào mát lạnh", price: 30000, category: "Đồ uống", difficultyLevel: 1 },
-  { name: "Cà phê sữa đá", description: "Cà phê phin truyền thống", price: 25000, category: "Đồ uống", difficultyLevel: 1 },
-  { name: "Nước cam ép", description: "Cam tươi ép nguyên chất", price: 35000, category: "Đồ uống", difficultyLevel: 1 },
+  // Beverages
+  { name: "Peach Lemongrass Tea", description: "Refreshing iced peach tea with lemongrass", price: 30000, category: "Beverages", difficultyLevel: 1, imageUrl: img("peach,tea", 19) },
+  { name: "Vietnamese Iced Milk Coffee", description: "Traditional Vietnamese phin filter coffee with milk", price: 25000, category: "Beverages", difficultyLevel: 1, imageUrl: img("iced,coffee", 20) },
+  { name: "Fresh Orange Juice", description: "Freshly squeezed orange juice", price: 35000, category: "Beverages", difficultyLevel: 1, imageUrl: img("orange,juice", 21) },
 
-  // Tráng miệng
-  { name: "Chè khúc bạch", description: "Chè khúc bạch hạnh nhân", price: 30000, category: "Tráng miệng", difficultyLevel: 2 },
-  { name: "Bánh flan", description: "Bánh flan caramel", price: 25000, category: "Tráng miệng", difficultyLevel: 1 },
+  // Desserts
+  { name: "Almond Jelly Dessert", description: "Sweet almond panna cotta dessert", price: 30000, category: "Desserts", difficultyLevel: 2, imageUrl: img("almond,dessert", 22) },
+  { name: "Caramel Flan", description: "Classic caramel custard flan", price: 25000, category: "Desserts", difficultyLevel: 1, imageUrl: img("caramel,flan", 23) },
 ];
 
 const seedUsers = async () => {
@@ -156,7 +184,7 @@ const TABLE_COUNT = 16;
 
 const seedTables = async () => {
   for (let i = 1; i <= TABLE_COUNT; i++) {
-    const tableNumber = `Bàn ${i}`;
+    const tableNumber = `Table ${i}`;
 
     const existing = await TableModel.findOne({ tableNumber });
     if (existing) {
@@ -198,6 +226,7 @@ const seedMenu = async () => {
           price: mongoose.Types.Decimal128.fromString(String(m.price)),
           category: { categoryId, categoryName: m.category },
           difficultyLevel: m.difficultyLevel,
+          imageUrl: m.imageUrl,
           isAvailable: true,
           readyToServeItems: false,
         },

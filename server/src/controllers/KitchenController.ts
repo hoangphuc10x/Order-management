@@ -295,4 +295,19 @@ export default class KitchenController extends BaseController {
       return this.sendError(res, 500, error.message || "Lỗi máy chủ");
     }
   };
+
+  // [GET] /kitchens/my-items — món được giao cho chính đầu bếp đang đăng nhập
+  public getMyItems = async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return this.sendError(res, 401, "Không xác định được đầu bếp");
+      }
+      const result = await this.kitchenService.getMyItems(userId);
+      return this.sendResponse(res, 200, { success: true, result });
+    } catch (error: any) {
+      console.error("❌ Lỗi khi lấy món của đầu bếp:", error);
+      return this.sendError(res, 500, error.message || "Lỗi máy chủ");
+    }
+  };
 }

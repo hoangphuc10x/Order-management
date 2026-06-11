@@ -13,7 +13,9 @@ import CreateDishForm from "@/components/admin/CreateDishForm";
 import { socket } from "@/provider/SocketProvider";
 import Alert from "@/components/Alert";
 import Reveal from "@/components/Reveal";
+import { useTranslation } from "react-i18next";
 const ManagerFoods = () => {
+  const { t } = useTranslation();
   const [selectedFood, setSelectedFood] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -73,7 +75,7 @@ const ManagerFoods = () => {
 
   useEffect(() => {
     if (isDeleteSucces) {
-      toast.success("Xóa món ăn thành công");
+      toast.success(t("managerFoods.deleteSuccess"));
     }
   }, [isDeleteSucces]);
 
@@ -88,7 +90,7 @@ const ManagerFoods = () => {
   return (
     <div className="w-full h-full">
       <div className="h-16 flex w-full justify-between items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
-        <h3 className="text-white font-bold text-xl">Quản lý món ăn</h3>
+        <h3 className="text-white font-bold text-xl">{t("managerFoods.title")}</h3>
         <div className="flex flex-1 justify-center">
           <div className="flex gap-4 items-center bg-white rounded-xl px-2 py-1 w-[20vw] relative">
             <Search
@@ -97,7 +99,7 @@ const ManagerFoods = () => {
               className="z-10 pointer-events-none"
             />
             <input
-              placeholder="Tìm kiếm"
+              placeholder={t("managerFoods.searchPlaceholder")}
               className="text-sm px-5 py-1 border-none outline-none absolute w-full rounded-xl bg-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -109,7 +111,7 @@ const ManagerFoods = () => {
           onClick={() => setShowForm(true)}
         >
           <Plus size={20} />
-          Thêm món mới
+          {t("managerFoods.addNew")}
         </button>
       </div>
 
@@ -117,7 +119,7 @@ const ManagerFoods = () => {
         {foods.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-gray-400">
             <Search size={48} className="mb-3" />
-            <p className="text-lg">Không tìm thấy món ăn nào</p>
+            <p className="text-lg">{t("managerFoods.notFound")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
@@ -138,7 +140,7 @@ const ManagerFoods = () => {
                       food.isAvailable ? "bg-green-500" : "bg-gray-400"
                     }`}
                   >
-                    {food.isAvailable ? "Còn bán" : "Tạm ngừng"}
+                    {food.isAvailable ? t("availability.available") : t("availability.paused")}
                   </span>
                 </div>
 
@@ -158,14 +160,14 @@ const ManagerFoods = () => {
                       onClick={() => openModal(food._id)}
                       className="flex flex-1 items-center justify-center gap-1 bg-[#7C3AED] hover:bg-yellow-400 text-white px-3 py-1.5 rounded-xl text-sm transition-colors"
                     >
-                      <Eye size={16} /> Chi tiết
+                      <Eye size={16} /> {t("managerFoods.details")}
                     </button>
                     <div className="flex items-center justify-center bg-[#ACACAC] hover:bg-red-500 text-white w-9 h-9 rounded-xl transition-colors">
                       <Alert
-                        btn1="Hủy"
-                        btn2="Xóa"
-                        description="Xóa món ăn khỏi dữ liệu của nhà hàng"
-                        title="Bạn có chắc chắn xóa không?"
+                        btn1={t("common.cancel")}
+                        btn2={t("common.delete")}
+                        description={t("managerFoods.deleteDesc")}
+                        title={t("common.confirmDelete")}
                         Icon={Trash2}
                         open=""
                         handleBtn2={async () => {

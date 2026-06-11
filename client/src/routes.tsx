@@ -33,6 +33,7 @@ import ShowTablePage from "./pages/staff/ShowTablePage.tsx";
 import StaffLayout from "./pages/staff/StaffLayout.tsx";
 import DiscountTicket from "./pages/admin/DiscountTicket.tsx";
 import ProtectedRouteRes from "./components/auth/ProtectedRouteRes.tsx";
+import NotFoundPage from "./pages/NotFoundPage.tsx";
 
 const MenuPageLazyLoad = lazy(() => import("./pages/user/MenuPage.tsx"));
 
@@ -189,5 +190,9 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
   },
 ]);

@@ -46,6 +46,44 @@ export default class OrderRepository extends BaseRepository<IOrder> {
     }
   };
 
+  // Đơn đang hoạt động của 1 khách tại 1 bàn (duy nhất theo user+table)
+  public findActiveByTableAndUser = async (
+    tableId: string,
+    userId: string
+  ): Promise<IOrder | null> => {
+    if (!mongoose.isValidObjectId(tableId) || !mongoose.isValidObjectId(userId)) {
+      throw new Error("Invalid tableId/userId format");
+    }
+    return await this.model
+      .findOne({
+        tableId: new Types.ObjectId(tableId),
+        userId: new Types.ObjectId(userId),
+        status: {
+          $nin: [TableOrderStatus.COMPLETED, TableOrderStatus.CANCELLED],
+        },
+      })
+      .exec();
+  };
+
+  // Tất cả đơn đang hoạt động của 1 bàn (nhiều khách cùng bàn -> nhiều đơn)
+  public findActiveOrdersByTable = async (
+    tableId: string,
+    session?: ClientSession
+  ): Promise<IOrder[]> => {
+    if (!mongoose.isValidObjectId(tableId)) {
+      throw new Error("Invalid tableId format");
+    }
+    return await this.model
+      .find({
+        tableId: new Types.ObjectId(tableId),
+        status: {
+          $nin: [TableOrderStatus.COMPLETED, TableOrderStatus.CANCELLED],
+        },
+      })
+      .session(session ?? null)
+      .exec();
+  };
+
   public findByUserId = async (userId: string): Promise<IOrder[]> => {
     try {
       if (!mongoose.isValidObjectId(userId)) {

@@ -1,5 +1,6 @@
 // Ensure you're importing the correct Staff type
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Search, Trash2, Pencil } from "lucide-react";
 import {
   Staff,
@@ -10,20 +11,21 @@ import StaffDetail from "@/components/admin/StaffDetail";
 import Alert from "@/components/Alert";
 import { formatDate } from "@/components/format/FormatDate";
 
-// Thứ tự và nhãn hiển thị của từng chức vụ
-const ROLE_GROUPS: { key: string; label: string }[] = [
-  { key: "manager", label: "Quản lý" },
-  { key: "chef_head", label: "Bếp trưởng" },
-  { key: "chef", label: "Bếp" },
-  { key: "staff", label: "Nhân viên" },
+// Thứ tự và nhãn hiển thị của từng chức vụ (labelKey trỏ tới khóa i18n)
+const ROLE_GROUPS: { key: string; labelKey: string }[] = [
+  { key: "manager", labelKey: "roles.manager" },
+  { key: "chef_head", labelKey: "roles.chefHead" },
+  { key: "chef", labelKey: "roles.chef" },
+  { key: "staff", labelKey: "roles.staff" },
 ];
 
-const ROLE_LABELS: Record<string, string> = ROLE_GROUPS.reduce(
-  (acc, g) => ({ ...acc, [g.key]: g.label }),
+const ROLE_LABEL_KEYS: Record<string, string> = ROLE_GROUPS.reduce(
+  (acc, g) => ({ ...acc, [g.key]: g.labelKey }),
   {}
 );
 
 const ManagerStaffs = () => {
+  const { t } = useTranslation();
   const [selectedStaff, setSelectedStaff] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [staffs, setStaffs] = useState<Staff[]>([]);
@@ -52,7 +54,7 @@ const ManagerStaffs = () => {
   };
 
   if (isLoading) {
-    return <div className="p-10">Đang tải...</div>;
+    return <div className="p-10">{t("common.loading")}</div>;
   }
 
   // Gom nhóm theo chức vụ, giữ thứ tự đã định nghĩa rồi tới các role lạ
@@ -62,7 +64,7 @@ const ManagerStaffs = () => {
   );
   const groupOrder = [
     ...ROLE_GROUPS,
-    ...extraKeys.map((k) => ({ key: k, label: k })),
+    ...extraKeys.map((k) => ({ key: k, labelKey: "" })),
   ];
 
   return (
@@ -70,7 +72,7 @@ const ManagerStaffs = () => {
       {/* Header */}
       <div className="h-16 flex w-full items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400 sticky top-0 z-10">
         <h3 className="text-white font-bold text-xl whitespace-nowrap">
-          Quản lý nhân viên
+          {t("managerStaffs.title")}
         </h3>
         <div className="flex flex-1 justify-center">
           <div className="flex gap-4 items-center bg-white rounded-xl px-2 py-1 w-[20vw] relative">
@@ -80,7 +82,7 @@ const ManagerStaffs = () => {
               className="z-10 pointer-events-none"
             />
             <input
-              placeholder="Tìm kiếm theo tên hoặc email"
+              placeholder={t("managerStaffs.searchPlaceholder")}
               className="text-sm px-5 py-1 border-none outline-none absolute w-full rounded-xl bg-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -94,7 +96,7 @@ const ManagerStaffs = () => {
         {staffs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-gray-400">
             <Search size={48} className="mb-3" />
-            <p className="text-lg">Không tìm thấy nhân viên nào</p>
+            <p className="text-lg">{t("managerStaffs.notFound")}</p>
           </div>
         ) : (
           groupOrder.map((group) => {
@@ -105,7 +107,7 @@ const ManagerStaffs = () => {
               <section key={group.key}>
                 <div className="flex items-center gap-3 mb-4">
                   <h4 className="text-lg font-bold text-gray-700">
-                    {group.label}
+                    {group.labelKey ? t(group.labelKey) : group.key}
                   </h4>
                   <span className="text-xs font-medium text-primary-100 bg-secondary-100 px-2.5 py-0.5 rounded-full">
                     {members.length}
@@ -144,6 +146,7 @@ interface StaffCardProps {
 }
 
 const StaffCard = ({ staff, onEdit, onDelete }: StaffCardProps) => {
+  const { t } = useTranslation();
   const initial = (staff.username || "?").charAt(0).toUpperCase();
 
   return (
@@ -161,7 +164,7 @@ const StaffCard = ({ staff, onEdit, onDelete }: StaffCardProps) => {
         {staff.email}
       </p>
       <span className="mt-1 text-xs font-medium text-primary-100 bg-secondary-100 px-2.5 py-0.5 rounded-full">
-        {ROLE_LABELS[staff.role] || staff.role}
+        {ROLE_LABEL_KEYS[staff.role] ? t(ROLE_LABEL_KEYS[staff.role]) : staff.role}
       </span>
       <p className="mt-2 text-xs text-gray-400">
         Tham gia: {formatDate(staff.createdAt)}
@@ -177,7 +180,7 @@ const StaffCard = ({ staff, onEdit, onDelete }: StaffCardProps) => {
           >
             <Pencil size={18} />
           </button>
-          <Tooltip>Chỉnh sửa thông tin</Tooltip>
+          <Tooltip>{t("managerStaffs.editTooltip")}</Tooltip>
         </div>
 
         {/* Xóa */}
@@ -186,17 +189,17 @@ const StaffCard = ({ staff, onEdit, onDelete }: StaffCardProps) => {
             <Alert
               open=""
               Icon={Trash2}
-              btn1="Hủy"
-              btn2="Xóa"
-              description="Xóa nhân viên khỏi dữ liệu của nhà hàng"
-              title="Bạn có chắc chắn xóa nhân viên này không?"
+              btn1={t("common.cancel")}
+              btn2={t("common.delete")}
+              description={t("managerStaffs.deleteDesc")}
+              title={t("managerStaffs.confirmDelete")}
               handleBtn2={async () => {
                 await onDelete();
               }}
               handleBtn1={() => {}}
             />
           </div>
-          <Tooltip variant="delete">Xóa nhân viên</Tooltip>
+          <Tooltip variant="delete">{t("managerStaffs.deleteTooltip")}</Tooltip>
         </div>
       </div>
     </div>

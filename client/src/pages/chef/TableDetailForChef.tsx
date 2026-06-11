@@ -16,8 +16,10 @@ import {
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const TableDetailForChef = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const location = useLocation();
   const tableName = location.state?.tableName;
@@ -48,7 +50,7 @@ const TableDetailForChef = () => {
         refetch();
       }
       if (data.status === "COMPLETED") {
-        toast.success("Đã hoàn thành món ăn");
+        toast.success(t("chef.dishCompleted"));
         refetch();
       }
     });
@@ -80,7 +82,7 @@ const TableDetailForChef = () => {
         orderItemIds,
         orderId: data?.order?._id || "",
       }).unwrap();
-      toast.success("Cập nhật trạng thái món thành công");
+      toast.success(t("chef.updateStatusSuccess"));
     } catch (error) {
       console.error("Error updating order status", error);
     }
@@ -96,7 +98,7 @@ const TableDetailForChef = () => {
     <div className=" flex flex-col flex-1 h-full border-2 py-5 gap-4 rounded-lg ">
       <div className="w-full flex justify-center">
         <span className="font-bold text-xl text-white bg-gradient-to-r from-primary-100 to-primary-400 px-4 py-1.5 rounded-lg shadow">
-          Bàn số: {tableName}
+          {t("chef.tableNo")} {tableName}
         </span>
       </div>
       <div
@@ -106,21 +108,21 @@ const TableDetailForChef = () => {
         <Table className="w-full">
           <TableHeader className="text-sm text-black">
             <TableRow>
-              <TableHead className="p-2 w-[5%] text-center">STT</TableHead>
+              <TableHead className="p-2 w-[5%] text-center">{t("table.stt")}</TableHead>
               <TableHead className="p-2 w-[25%] text-center">
-                Tên món ăn
+                {t("table.dishName")}
               </TableHead>
               <TableHead className="p-2 w-[15%] text-center">
-                Số lượng món
+                {t("table.quantityDish")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Thời gian cập nhật
+                {t("table.updateTime")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Trạng thái
+                {t("table.status")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Chức năng
+                {t("table.actions")}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -138,13 +140,13 @@ const TableDetailForChef = () => {
                 </TableCell>
                 <TableCell className="p-2 text-center">
                   {order.status === "PENDING" ? (
-                    <span className="text-yellow-500">Chờ xử lý</span>
+                    <span className="text-yellow-500">{t("status.waiting")}</span>
                   ) : order.status === "PROCESSING" ? (
-                    <span className="text-green-700">Đang chế biến</span>
+                    <span className="text-green-700">{t("status.processing")}</span>
                   ) : order.status === "COMPLETED" ? (
-                    <span className="text-blue-600">Đã hoàn thành</span>
+                    <span className="text-blue-600">{t("status.completed")}</span>
                   ) : (
-                    <span className="text-blue-600">Đã lên món</span>
+                    <span className="text-blue-600">{t("status.plated")}</span>
                   )}
                 </TableCell>
                 <TableCell className="p-2 text-center">
@@ -154,7 +156,7 @@ const TableDetailForChef = () => {
                         onClick={() => handleModalAllChef(order)}
                         className="bg-primary-100 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
                       >
-                        Chọn đầu bếp
+                        {t("chef.selectChefBtn")}
                       </button>
                     )}
                     {order.status === STATUS.PROCESSING && (
@@ -164,13 +166,13 @@ const TableDetailForChef = () => {
                         }
                         className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
                       >
-                        Hoàn thành
+                        {t("common.complete")}
                       </button>
                     )}
                     {(order.status === STATUS.COMPLETED ||
                       order.status === STATUS.SERVED) && (
                       <span className="bg-green-500  text-white px-3 py-1 rounded-xl whitespace-nowrap opacity-50">
-                        Đã xong
+                        {t("status.done")}
                       </span>
                     )}
                   </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Alert from "../Alert";
 import { useCreateDiscountMutation } from "@/service/adminAPI";
 import { toast } from "sonner";
@@ -10,6 +11,7 @@ const CreateDiscountForm = ({
   setShowForm: (show: boolean) => void;
   refetch: () => void;
 }) => {
+  const { t } = useTranslation();
   const today = new Date().toISOString().split("T")[0];
   const [startDate, setStartDate] = useState(today);
   const [code, setCode] = useState("");
@@ -26,8 +28,8 @@ const CreateDiscountForm = ({
   const validateInputs = (): boolean => {
     const errs: Record<string, string> = {};
 
-    if (!code.trim()) errs.code = "Mã giảm giá là bắt buộc.";
-    if (type === "percentage" && Number(value) > 100) errs.value = "Giá trị phải bé hơn 100%.";
+    if (!code.trim()) errs.code = t("discount.required");
+    if (type === "percentage" && Number(value) > 100) errs.value = t("discount.valueMax100");
 
 
     setErrors(errs);
@@ -58,9 +60,9 @@ const CreateDiscountForm = ({
       setStartDate(today);
       setEndDate(today);
       setQuantity("");
-      toast.success("Tạo mã giảm giá thành công");
+      toast.success(t("discount.createSuccess"));
     } else {
-      toast.error("Tạo mã giảm giá thất bại");
+      toast.error(t("discount.createFail"));
     }
 
 
@@ -70,7 +72,7 @@ const CreateDiscountForm = ({
     <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center h-screen">
       <div className="bg-white w-[900px] max-w-[95vw] max-w-full shadow-lg mb-[80px] mt-[91px]">
         <div className="bg-gradient-to-r from-primary-100 to-primary-400 p-3 flex items-center justify-between">
-          <h2 className="text-white text-xl text-center flex-grow">Tạo mã</h2>
+          <h2 className="text-white text-xl text-center flex-grow">{t("discount.createTitle")}</h2>
         </div>
 
         <div className="px-20 max-h-[600px] overflow-auto">
@@ -78,11 +80,11 @@ const CreateDiscountForm = ({
             {/* Code input */}
             <div className="flex flex-col items-start">
               <div className="flex gap-2 items-center w-full">
-                <p>Tên mã:</p>
+                <p>{t("discount.nameLabel")}</p>
                 <input
                   type="text"
                   value={code}
-                  placeholder={errors.code ? errors.code : "Nhập mã giảm giá"}
+                  placeholder={errors.code ? errors.code : t("discount.namePlaceholder")}
                   onChange={(e) => setCode(e.target.value)}
                   className={`p-1 flex-1 border  rounded-lg ${
                     errors.code ? "border-red-500 " : "border-black"
@@ -95,7 +97,7 @@ const CreateDiscountForm = ({
               {/* Left column */}
               <div className="flex flex-col gap-5 flex-1">
                 <div className="flex gap-2 items-center">
-                  <p>Loại:</p>
+                  <p>{t("discount.typeLabel")}</p>
                   <select
                     className="border border-secondary-100 rounded-lg p-1"
                     value={type}
@@ -103,20 +105,20 @@ const CreateDiscountForm = ({
                       setType(e.target.value as "percentage" | "fixed")
                     }
                   >
-                    <option value="percentage">Giảm giá theo %</option>
-                    <option value="fixed">Giảm giá theo VNĐ</option>
+                    <option value="percentage">{t("discount.byPercent")}</option>
+                    <option value="fixed">{t("discount.byVnd")}</option>
                   </select>
                 </div>
                 <div className="flex flex-col items-start">
                   <div className="flex gap-2 items-center w-full">
-                    <p>Số tiền giảm tối đa:</p>
+                    <p>{t("discount.maxAmount")}</p>
                     <input
                       type="text"
                       className={`p-1 border  rounded-lg ${
                         errors.maxDiscount ? "border-red-500 " : "border-black"
                       }`}
                       placeholder={
-                        errors.maxDiscount ? errors.maxDiscount : "Tối đa"
+                        errors.maxDiscount ? errors.maxDiscount : t("discount.maxPlaceholder")
                       }
                       value={maxDiscount}
                       onChange={(e) => {
@@ -127,7 +129,7 @@ const CreateDiscountForm = ({
                   </div>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <p>Ngày bắt đầu</p>
+                  <p>{t("discount.startDate")}</p>
                   <input
                     type="date"
                     className="p-1 border border-black rounded-lg"
@@ -142,13 +144,13 @@ const CreateDiscountForm = ({
               <div className="flex flex-col gap-5 flex-1">
                 <div className="flex flex-col items-start">
                   <div className="flex gap-2 items-center w-full">
-                    <p>Giá trị:</p>
+                    <p>{t("discount.valueLabel")}</p>
                     <input
                       type="text"
                       className={`p-1 border  rounded-lg ${
                         errors.value ? "border-red-500 " : "border-black"
                       }`}
-                      placeholder={errors.value ? errors.value : "Giá trị"}
+                      placeholder={errors.value ? errors.value : t("discount.valuePlaceholder")}
                       value={value}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -160,11 +162,11 @@ const CreateDiscountForm = ({
 
                 <div className="flex flex-col items-start">
                   <div className="flex gap-2 items-center w-full">
-                    <p>Áp dụng cho:</p>
+                    <p>{t("discount.applyTo")}</p>
                     <input
                       type="text"
                       className="flex-1 p-1 border border-black rounded-lg"
-                      placeholder="Áp dụng cho đơn"
+                      placeholder={t("discount.applyToPlaceholder")}
                       value={minOrderValue}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -180,7 +182,7 @@ const CreateDiscountForm = ({
                 </div>
 
                 <div className="flex gap-2 items-center">
-                  <p>Ngày kết thúc</p>
+                  <p>{t("discount.endDate")}</p>
                   <input
                     type="date"
                     className="p-1 border border-black rounded-lg"
@@ -195,11 +197,11 @@ const CreateDiscountForm = ({
             {/* Quantity input */}
             <div className="flex flex-col items-start">
               <div className="flex gap-2 items-center w-full">
-                <p>Số lượng:</p>
+                <p>{t("discount.quantityLabel")}</p>
                 <input
                   type="text"
                   className="p-1 flex-1 border border-black rounded-lg"
-                  placeholder="Số lượng"
+                  placeholder={t("discount.quantityPlaceholder")}
                   value={quantity}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -214,15 +216,15 @@ const CreateDiscountForm = ({
                 onClick={() => setShowForm(false)}
                 className="h-[32px] w-[100px] bg-white border border-[#7C3AED] rounded-2xl hover:bg-secondary-100"
               >
-                Đóng
+                {t("common.close")}
               </button>
               <div className="h-[32px] w-[100px] bg-[#7C3AED] text-white rounded-2xl flex justify-center items-center hover:bg-secondary-100">
                 <Alert
-                  open="Tạo"
-                  btn1="Hủy"
-                  btn2="Tạo mới"
-                  description="Tạo mã giảm giá được thêm vào dữ liệu nhà hàng!"
-                  title="Bạn có muốn tạo mã này không?"
+                  open={t("discount.create")}
+                  btn1={t("common.cancel")}
+                  btn2={t("discount.createBtn")}
+                  description={t("discount.confirmDesc")}
+                  title={t("discount.confirmTitle")}
                   handleBtn1={() => {}}
                   handleBtn2={handleCreate}
                 />

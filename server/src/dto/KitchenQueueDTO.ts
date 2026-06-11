@@ -11,6 +11,9 @@ export class KitchenQueueDTO {
     public tableNumber: string,
     public createdAt: Date,
     public updatedAt: Date,
-    public orderItemId: string
+    public orderItemId: string,
+    public categoryId?: string,
+    public userId?: string,
+    public fulname?: string
   ) {}
 }

@@ -9,12 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/ui/Table";
+import { useTranslation } from "react-i18next";
 interface TableDetailProps {
   setSelectedTable: (table: null | string) => void;
   id: string;
 }
 
 const TableDetailAdmin = ({ setSelectedTable, id }: TableDetailProps) => {
+  const { t } = useTranslation();
   const { data, isLoading } = useGetOreredOfTableQuery(id);
 
   if (isLoading) {
@@ -26,7 +28,7 @@ const TableDetailAdmin = ({ setSelectedTable, id }: TableDetailProps) => {
       <div className="bg-white w-[900px] max-w-[95vw] max-w-full h-[579px] shadow-lg overflow-auto mb-[80px]">
         {/* Header */}
         <div className="bg-gradient-to-r from-primary-100 to-primary-400  text-white text-lg font-bold h-[10%] p-4 flex justify-center items-center relative ">
-          <span className="">Thông tin bàn</span>
+          <span className="">{t("tableDetail.title")}</span>
           <X
             size={24}
             className="cursor-pointer absolute right-4"
@@ -38,12 +40,12 @@ const TableDetailAdmin = ({ setSelectedTable, id }: TableDetailProps) => {
           <Table className="mt-5 border-b-2 max-h-[80%]">
             <TableHeader className="text-sm text-[#949494]">
               <TableRow>
-                <TableHead className="text-center w-[5%]">STT</TableHead>
-                <TableHead className="text-center w-[30%]">Tên món</TableHead>
-                <TableHead className="text-center w-[5%]">Số lượng</TableHead>
-                <TableHead className="text-center w-[40%]">Ghi chú</TableHead>
+                <TableHead className="text-center w-[5%]">{t("table.stt")}</TableHead>
+                <TableHead className="text-center w-[30%]">{t("table.name")}</TableHead>
+                <TableHead className="text-center w-[5%]">{t("table.quantity")}</TableHead>
+                <TableHead className="text-center w-[40%]">{t("table.note")}</TableHead>
                 <TableHead className="text-center w-[15%]">
-                  Trạng thái
+                  {t("table.status")}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -79,12 +81,12 @@ const TableDetailAdmin = ({ setSelectedTable, id }: TableDetailProps) => {
                       }`}
                     >
                       {item.status === "PENDING"
-                        ? "Đang chờ"
+                        ? t("status.pending")
                         : item.status === "PROCESSING"
-                        ? "Đang chế biến"
+                        ? t("status.processing")
                         : item.status === "COMPLETED"
-                        ? "Đã xong"
-                        : "Đã phục vụ"}
+                        ? t("status.done")
+                        : t("status.served")}
                     </span>
                   </TableCell>
                 </TableRow>

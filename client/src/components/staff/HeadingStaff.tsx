@@ -10,10 +10,10 @@ import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const ROLE_LABELS: Record<string, string> = {
-  manager: "Quản lý",
-  staff: "Nhân viên",
-  chef: "Bếp",
-  chef_head: "Bếp trưởng",
+  manager: "roles.manager",
+  staff: "roles.staff",
+  chef: "roles.chef",
+  chef_head: "roles.chefHead",
 };
 
 const HeadingStaff = () => {
@@ -23,11 +23,11 @@ const HeadingStaff = () => {
   const userInfo = useUserInfo();
   const { t } = useTranslation();
 
-  const displayName = userInfo?.name || userInfo?.username || "Tài khoản";
+  const displayName = userInfo?.name || userInfo?.username || t("common.account");
 
   const handleLogout = () => {
     navigate("/login/admin");
-    toast.success("Đăng xuất thành công");
+    toast.success(t("common.logoutSuccess"));
     setTimeout(() => {
       dispatch(logout());
     }, 500);
@@ -54,7 +54,9 @@ const HeadingStaff = () => {
                 {displayName}
               </span>
               <span className="text-xs text-white/70">
-                {ROLE_LABELS[userInfo?.role || ""] || userInfo?.role || ""}
+                {ROLE_LABELS[userInfo?.role || ""]
+                  ? t(ROLE_LABELS[userInfo?.role || ""])
+                  : userInfo?.role || ""}
               </span>
             </div>
             <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-primary-100">

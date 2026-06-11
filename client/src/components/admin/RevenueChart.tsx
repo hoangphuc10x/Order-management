@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import { useGetRevenueAnnualQuery } from "@/service/adminAPI";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -25,6 +26,7 @@ ChartJS.register(
 );
 
 const RevenueChart = () => {
+  const { t } = useTranslation();
   const [year] = useState<string | null>("");
 
   // Provide a fallback year (e.g., current year) if `year` is null or empty
@@ -65,7 +67,7 @@ const RevenueChart = () => {
     labels: labels,
     datasets: [
       {
-        label: "Tổng doanh thu hàng tháng",
+        label: t("chart.monthlyRevenue"),
         data: monthlyRevenue,
         fill: false,
         borderColor: "#C15555",
@@ -87,7 +89,7 @@ const RevenueChart = () => {
       },
       title: {
         display: true,
-        text: "Thống kê doanh thu",
+        text: t("chart.revenueStats"),
         color: "#7C3AED",
         font: {
           size: 20,

@@ -19,10 +19,10 @@ interface HeadingChefProps {
 }
 
 const ROLE_LABELS: Record<string, string> = {
-  manager: "Quản lý",
-  staff: "Nhân viên",
-  chef: "Bếp",
-  chef_head: "Bếp trưởng",
+  manager: "roles.manager",
+  staff: "roles.staff",
+  chef: "roles.chef",
+  chef_head: "roles.chefHead",
 };
 
 const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
@@ -35,11 +35,11 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
   const { data = { success: false, data: [] }, isLoading, refetch } =
     useGetTableOccupiedQuery();
 
-  const displayName = userInfo?.name || userInfo?.username || "Tài khoản";
+  const displayName = userInfo?.name || userInfo?.username || t("common.account");
 
   const handleLogout = () => {
     navigate("/login/admin");
-    toast.success("Đăng xuất thành công");
+    toast.success(t("common.logoutSuccess"));
     setTimeout(() => {
       dispatch(logout());
     }, 500);
@@ -74,7 +74,7 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
         <button
           className="shrink-0 rounded-lg bg-white/20 hover:bg-white/30 text-white p-2 transition-colors"
           onClick={handleToggleNavbar}
-          aria-label="Mở danh mục"
+          aria-label={t("chef.openCategory")}
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -86,7 +86,7 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
 
         {/* Danh sách số bàn */}
         <span className="text-base font-bold text-white shrink-0 ml-2">
-          Số bàn
+          {t("chef.tableNumbers")}
         </span>
         <div
           className="flex items-center gap-2 flex-1 overflow-x-auto"
@@ -117,7 +117,7 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
             })
           ) : (
             <span className="text-white/80 italic text-sm">
-              Không có bàn nào!!
+              {t("chef.noTables")}
             </span>
           )}
         </div>
@@ -131,7 +131,7 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
             <LayoutGrid size={20} />
           </Link>
           <span className="pointer-events-none absolute top-12 right-0 z-30 whitespace-nowrap rounded-md bg-gray-800 px-2.5 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-            Xem các bàn đang đặt món
+            {t("chef.viewOrderingTables")}
           </span>
         </div>
 
@@ -149,7 +149,9 @@ const HeadingChef: React.FC<HeadingChefProps> = ({ handleToggleNavbar }) => {
                 {displayName}
               </span>
               <span className="text-xs text-white/70">
-                {ROLE_LABELS[userInfo?.role || ""] || userInfo?.role || ""}
+                {ROLE_LABELS[userInfo?.role || ""]
+                  ? t(ROLE_LABELS[userInfo?.role || ""])
+                  : userInfo?.role || ""}
               </span>
             </div>
             <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-primary-100">

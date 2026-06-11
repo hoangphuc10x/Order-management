@@ -6,7 +6,9 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { addToCart } from "@/redux/slices/orderSlice";
+import { useTranslation } from "react-i18next";
 const DetailItem = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -76,7 +78,7 @@ const DetailItem = () => {
             {data?.result.description}
           </span>
           <div className="flex flex-col lg:gap-2 gap-1 lg:px-4 text-xs lg:text-base text-slate-500">
-            <h3 className="italic">Thành phần chính:</h3>
+            <h3 className="italic">{t("detailItem.mainIngredients")}</h3>
             <span>
               Thịt heo: Thịt ba chỉ hoặc thịt mông được luộc chín vừa phải, giữ
               nguyên độ mềm ngọt và có lớp da giòn nhẹ.
@@ -97,7 +99,7 @@ const DetailItem = () => {
           </div>
 
           <textarea
-            placeholder="Thêm lưu ý cho quán"
+            placeholder={t("detailItem.notePlaceholder")}
             className="border-2 rounded-lg outline-none px-2 py-1 flex-1 text-xs lg:text-base  resize-none border-primary-300"
             value={notice}
             onChange={(e) => setNotice(e.target.value)}
@@ -123,10 +125,10 @@ const DetailItem = () => {
             <div className=" bg-white text-primary-300 rounded-xl border-2 border-primary-300 px-2 hover:bg-primary-400">
               <button onClick={handleSubmitCart}>
                 {quantityInitial
-                  ? `Cập nhật giỏ hàng: ${(
+                  ? `${t("detailItem.updateCart")}: ${(
                       Number(data?.result.price.$numberDecimal) * quantity
                     ).toLocaleString("vi-VN")} VNĐ`
-                  : `Thêm vào giỏ hàng: ${(
+                  : `${t("detailItem.addToCart")}: ${(
                       Number(data?.result.price.$numberDecimal) * quantity
                     ).toLocaleString("vi-VN")} VNĐ`}
               </button>

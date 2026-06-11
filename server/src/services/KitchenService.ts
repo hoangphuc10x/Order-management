@@ -41,6 +41,9 @@ export default class KitchenService {
       createdAt,
       updatedAt,
       orderItemId,
+      categoryId,
+      userId,
+      fulname,
     } = item;
 
     return new KitchenQueueDTO(
@@ -53,13 +56,22 @@ export default class KitchenService {
       tableNumber,
       createdAt,
       updatedAt,
-      orderItemId
+      orderItemId,
+      categoryId ? String(categoryId) : undefined,
+      userId,
+      fulname
     );
   };
 
   public getAllOrderItems = async (): Promise<KitchenQueueDTO[]> => {
     const orderItems = await this.kitchenRepository.getAllOrderItems();
     return orderItems.map((item) => this.toKitchenDTO(item));
+  };
+
+  // Danh sách món được giao cho 1 đầu bếp, trả về DTO giống get-all.
+  public getMyItems = async (userId: string): Promise<KitchenQueueDTO[]> => {
+    const items = await this.kitchenRepository.findByUserId(userId);
+    return items.map((item) => this.toKitchenDTO(item));
   };
 
   private async updateOrderItemStatus(
@@ -201,12 +213,26 @@ export default class KitchenService {
       if (item.userId) {
         const chef = await this.userRepository.findById(item.userId.toString());
         if (chef && chef.role === "chef" && chef.status === "COOKING") {
-          chef.status = "STANDBY";
-          chef.updatedAt = now;
-          await chef.save();
-          console.log(
-            `✅ Đã đổi trạng thái của đầu bếp ${chef.username} về STANDBY`
-          );
+          // Chỉ đưa đầu bếp về STANDBY khi không còn món nào khác đang nấu.
+          // (Món hiện tại vẫn đang PROCESSING tại thời điểm này nên loại trừ nó ra.)
+          const remainingCooking = await KitchenQueueModel.countDocuments({
+            userId: item.userId,
+            status: FoodStatus.PROCESSING,
+            _id: { $ne: item._id },
+          });
+
+          if (remainingCooking === 0) {
+            chef.status = "STANDBY";
+            chef.updatedAt = now;
+            await chef.save();
+            console.log(
+              `✅ Đã đổi trạng thái của đầu bếp ${chef.username} về STANDBY`
+            );
+          } else {
+            console.log(
+              `👨‍🍳 Đầu bếp ${chef.username} vẫn còn ${remainingCooking} món đang nấu, giữ trạng thái COOKING`
+            );
+          }
         }
       }
 
@@ -500,13 +526,14 @@ export default class KitchenService {
         throw new Error("Không tìm thấy đầu bếp hợp lệ");
       }
 
-      if (chef.status !== "STANDBY") {
-        throw new Error("Đầu bếp hiện không sẵn sàng (STANDBY)");
+      // Cho phép giao món cho đầu bếp đang STANDBY hoặc đang COOKING
+      // (1 đầu bếp có thể nấu nhiều món cùng lúc). Chỉ chặn khi nghỉ/bận.
+      if (chef.status === "LAY-OFF" || chef.status === "BUSYING") {
+        throw new Error("Đầu bếp hiện không sẵn sàng để nhận món");
       }
 
-      // ✅ Cập nhật trạng thái đầu bếp
-      chef.status = "COOKING";
-      await chef.save({ session });
+      // ❗ Không đổi trạng thái đầu bếp khi giao món. Đầu bếp chỉ chuyển sang
+      // COOKING khi tự bấm "Bắt đầu nấu" (chuyển món sang PROCESSING).
 
       // 🔍 Lấy danh sách KitchenQueue cần gán
 
@@ -534,16 +561,15 @@ export default class KitchenService {
           throw new Error(`Món "${item.name}" không ở trạng thái PENDING`);
         }
 
-        // ✅ Cập nhật kitchenQueue
+        // ✅ Gán đầu bếp nhưng GIỮ NGUYÊN trạng thái PENDING.
+        // Đầu bếp được giao sẽ tự chuyển sang PROCESSING khi bắt đầu nấu.
         item.userId = (chef._id as any).toString();
         item.fulname = chef.fulname || chef.username;
-        item.status = FoodStatus.PROCESSING;
-        item.startCookingTime = now;
         item.updatedAt = now;
         await item.save({ session });
         updatedItems.push(item);
 
-        // ✅ Cập nhật orderItems trong Order
+        // ✅ Cập nhật orderItems trong Order (chỉ cập nhật thời gian, giữ PENDING)
         const order = orders.find(
           (o) => (o._id as any).toString() === (item.orderId as any).toString()
         );
@@ -552,7 +578,6 @@ export default class KitchenService {
             (oi) => oi._id.toString() === item.orderItemId.toString()
           );
           if (orderItem) {
-            orderItem.status = FoodStatus.PROCESSING;
             orderItem.updatedAt = now;
           }
           order.updatedAt = now;
@@ -562,9 +587,10 @@ export default class KitchenService {
         }
       }
 
-      io?.emit("kitchenStatusUpdated", {
+      // Phát sự kiện đã giao món để view của đầu bếp tự cập nhật (vẫn PENDING).
+      io?.emit("chefAssigned", {
         kitchenItemIds: updatedItems.map((item) => item._id),
-        status: FoodStatus.PROCESSING,
+        userId: (chef._id as any).toString(),
       });
 
       await session.commitTransaction();

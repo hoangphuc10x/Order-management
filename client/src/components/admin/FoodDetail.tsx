@@ -8,6 +8,7 @@ import ImageUpload from "./ImageUpload";
 import { toast } from "sonner";
 import { useGetAllCategoriesQuery } from "@/service/categoryApi";
 import Alert from "../Alert";
+import { useTranslation } from "react-i18next";
 
 interface FoodDetailProps {
   setShowModal: (value: boolean) => void;
@@ -15,6 +16,7 @@ interface FoodDetailProps {
 }
 
 const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<string>("");
   const [category, setCategory] = useState<{
@@ -69,10 +71,10 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
         readyToServeItems,
       });
       setIsEditing(false); // Sau khi lưu, chuyển về chế độ xem
-      toast.success("Cập nhật món thành công!"); // Thông báo thành công
+      toast.success(t("foodDetail.updateSuccess")); // Thông báo thành công
     } catch (error) {
       console.error("Failed to update food item:", error);
-      toast.error("Cập nhật món ăn thất bại. Vui lòng thử lại."); // Thông báo lỗi
+      toast.error(t("foodDetail.updateFail")); // Thông báo lỗi
     }
   };
 
@@ -87,7 +89,7 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
       <div className="bg-white w-[800px] max-w-[95vw] max-w-full h-[650px] shadow-lg flex flex-col mb-[80px]  mt-10">
         {/* Header */}
         <div className="bg-gradient-to-r from-primary-100 to-primary-400 text-white text-lg font-bold h-[65px] p-4 flex justify-center items-center">
-          <p>Chi tiết món ăn</p>
+          <p>{t("foodDetail.title")}</p>
         </div>
 
         {/* Body */}
@@ -97,7 +99,7 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
         >
           <div className="space-y-4">
             <div>
-              <strong>Tên món ăn:</strong>
+              <strong>{t("foodDetail.nameLabel")}</strong>
               <input
                 type="text"
                 className="w-full p-2 border rounded-lg mt-2"
@@ -107,7 +109,7 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
               />
             </div>
             <div>
-              <strong>Giá tiền:</strong>
+              <strong>{t("foodDetail.priceLabel")}</strong>
               <input
                 type="text"
                 className="w-full p-2 border rounded-lg mt-2"
@@ -118,7 +120,7 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
             </div>
 
             <div>
-              <strong>Loại món ăn:</strong>
+              <strong>{t("foodDetail.categoryLabel")}</strong>
               <select
                 className="w-full p-3 border rounded-lg"
                 value={category?.categoryId || ""}
@@ -142,13 +144,13 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
                     </option>
                   ))
                 ) : (
-                  <option value="">Không có danh mục</option>
+                  <option value="">{t("foodDetail.noCategory")}</option>
                 )}
               </select>
             </div>
 
             <div>
-              <strong>Mức độ khó:</strong>
+              <strong>{t("foodDetail.difficultyLabel")}</strong>
               <select
                 className="w-full p-3 border rounded-lg mt-2"
                 value={difficultyLevel}
@@ -164,7 +166,7 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
             </div>
 
             <div>
-              <strong>Mô tả:</strong>
+              <strong>{t("foodDetail.descLabel")}</strong>
               <textarea
                 className="w-full p-2 border rounded-lg "
                 disabled={!isEditing}
@@ -177,13 +179,13 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
           {/* Image Section */}
           <div className="flex gap-10">
             <div>
-              <strong>Ảnh:</strong>
+              <strong>{t("foodDetail.imageLabel")}</strong>
               {isEditing ? (
                 <ImageUpload setImageUrl={setImageUrl} imageUrl={imageUrl} />
               ) : (
                 <img
                   src={imageUrl}
-                  alt="Ảnh món ăn"
+                  alt={t("foodDetail.imageAlt")}
                   className="size-[200px] object-cover rounded-lg border border-gray-300"
                 />
               )}
@@ -198,7 +200,7 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
                   defaultChecked={readyToServeItems}
                   disabled={!isEditing}
                 />
-                <span>Sẵn sàng để ra món</span>
+                <span>{t("foodDetail.readyToServe")}</span>
               </label>
             </div>
           </div>
@@ -210,16 +212,16 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
             className="h-10 w-[120px] text-black border border-yellow-500 rounded-2xl hover:bg-yellow-500 hover:text-white transition"
             onClick={() => setShowModal(false)}
           >
-            Đóng
+            {t("common.close")}
           </button>
           {isEditing ? (
             <div className="h-10 w-[120px] text-black border border-yellow-500 rounded-2xl hover:bg-yellow-500 hover:text-white  flex justify-center items-center transition">
               <Alert
-                open={isUpdating ? "Đang lưu..." : "Lưu lại"}
-                btn1="Hủy"
-                btn2="Lưu"
-                description="Chỉnh sửa dữ liệu món ăn của nhà hàng"
-                title="Bạn có chắc lưu không?"
+                open={isUpdating ? t("common.saving") : t("common.saveBtn")}
+                btn1={t("common.cancel")}
+                btn2={t("common.save")}
+                description={t("foodDetail.confirmSaveDesc")}
+                title={t("foodDetail.confirmSaveTitle")}
                 handleBtn2={handleSave}
                 handleBtn1={() => {}}
               />
@@ -229,7 +231,7 @@ const FoodDetail: React.FC<FoodDetailProps> = ({ setShowModal, id }) => {
               className="h-10 w-[120px] text-black border border-yellow-500 bg-yellow-400 rounded-2xl hover:bg-yellow-500 hover:text-white transition"
               onClick={() => setIsEditing(true)}
             >
-              Chỉnh sửa
+              {t("common.edit")}
             </button>
           )}
         </div>

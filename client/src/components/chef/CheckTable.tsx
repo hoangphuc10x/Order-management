@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../ui/Table";
+import { useTranslation } from "react-i18next";
 
 const CheckTable = ({
   itemId,
@@ -17,6 +18,7 @@ const CheckTable = ({
   status: string;
   setIsModalOpen: (value: boolean) => void;
 }) => {
+  const { t } = useTranslation();
   const { data: tableData } = useGetItemForTableQuery({
     itemId,
     status,
@@ -25,7 +27,7 @@ const CheckTable = ({
     <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center">
       <div className="bg-white w-[900px] max-w-[95vw] max-w-full h-[579px] shadow-lg overflow-auto mb-[80px] fixed top-0 left-1/2 transform -translate-x-1/2 z-50 mt-10">
         <div className="bg-gradient-to-r from-primary-100 to-primary-400 text-white text-lg font-bold h-[65px] p-4 flex justify-center items-center">
-          <p>Các bàn trùng món</p>
+          <p>{t("chef.duplicateTables")}</p>
         </div>
 
         <div className="p-10 text-lg flex flex-col items-center text-center">
@@ -33,15 +35,15 @@ const CheckTable = ({
             <Table className="w-full">
               <TableHeader className="text-sm text-black">
                 <TableRow>
-                  <TableHead className="p-2 w-[5%] text-center">STT</TableHead>
+                  <TableHead className="p-2 w-[5%] text-center">{t("table.stt")}</TableHead>
                   <TableHead className="p-2 w-[10%] text-center">
-                    Tên bàn
+                    {t("chef.tableName")}
                   </TableHead>
                   <TableHead className="p-2 w-[5%] text-center">
-                    Số lượng
+                    {t("table.quantity")}
                   </TableHead>
                   <TableHead className="p-2 w-[10%] text-center">
-                    Ghi chú
+                    {t("table.note")}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -65,7 +67,7 @@ const CheckTable = ({
             className="h-8 w-[100px] text-black border border-yellow-500 rounded-2xl hover:bg-yellow-500 hover:text-white transition"
             onClick={() => setIsModalOpen(false)} // Đóng modal khi nhấn nút "Đóng"
           >
-            Đóng
+            {t("common.close")}
           </button>
         </div>
       </div>

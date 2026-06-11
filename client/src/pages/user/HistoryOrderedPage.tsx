@@ -2,8 +2,10 @@ import { useUserInfo } from "@/hook/auth";
 import { useGetOreredByUserIdQuery } from "@/service/orderApi";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const HistoryOrderedPage = () => {
+  const { t } = useTranslation();
   const { _id } = useUserInfo();
 
   const { data } = useGetOreredByUserIdQuery(_id || "");
@@ -15,7 +17,7 @@ const HistoryOrderedPage = () => {
           (order) => order.status !== "CANCELLED" && order.status !== "COMPLETED"
         ).length !== 0 && (
           <div className="flex flex-col gap-2 w-full">
-            <h3 className="font-bold">Đang hoạt động</h3>
+            <h3 className="font-bold">{t("history.active")}</h3>
             <div className="flex flex-1 w-full flex-col gap-2">
               {data?.order
                 .filter(
@@ -29,7 +31,7 @@ const HistoryOrderedPage = () => {
                     className=" animated-border-order flex flex-col px-2 py-1  w-full"
                   >
                     <div>
-                      Thời gian đặt:{" "}
+                      {t("history.orderTime")}{" "}
                       <span className="text-primary-100 ">
                         {dayjs(order.createdAt).format("DD/MM/YYYY HH:mm:ss")}
                       </span>
@@ -43,7 +45,7 @@ const HistoryOrderedPage = () => {
           </div>
         )}
         <div className="flex flex-col flex-1 ">
-          <h3 className="font-bold">Gần đây</h3>
+          <h3 className="font-bold">{t("history.recent")}</h3>
           {data?.order.filter((order) => order.status === "COMPLETED")
             .length ? (
             <div className="flex flex-col gap-2 w-full">
@@ -56,7 +58,7 @@ const HistoryOrderedPage = () => {
                     className=" border-2 border-secondary-100  flex flex-col px-2 py-1 rounded-lg  w-full"
                   >
                     <div>
-                      Thời gian đặt:{" "}
+                      {t("history.orderTime")}{" "}
                       <span className="text-primary-100">
                         {dayjs(order.createdAt).format("DD/MM/YYYY HH:mm:ss")}
                       </span>
@@ -69,7 +71,7 @@ const HistoryOrderedPage = () => {
             </div>
           ) : (
             <div className="text-secondary-100">
-              Không có đơn hàng nào trước đây
+              {t("history.noOrders")}
             </div>
           )}
         </div>

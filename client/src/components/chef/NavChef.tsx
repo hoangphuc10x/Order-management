@@ -3,9 +3,14 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { AlignJustify, ConciergeBell } from "lucide-react";
 import { useGetAllCategoriesQuery } from "@/service/categoryApi";
 import Loading from "../Loading";
+import { useTranslation } from "react-i18next";
+import { useUserInfo } from "@/hook/auth";
 
 const NavChef = ({ isOpen }: { isOpen: boolean }) => {
+  const { t } = useTranslation();
   const location = useLocation();
+  const { role } = useUserInfo();
+  const isChef = role === "chef";
   const { data, isLoading } = useGetAllCategoriesQuery();
 
   if (isLoading) {
@@ -15,11 +20,11 @@ const NavChef = ({ isOpen }: { isOpen: boolean }) => {
   return (
     <div className="w-full h-full py-2  bg-white border-r border-gray-200">
       <h1 className="flex items-center justify-center text-2xl font-bold mb-3">
-        Danh mục
+        {t("chef.category")}
       </h1>
       <div className="w-full">
         <ItemNavbar
-          label="Xem tất cả món ăn"
+          label={t("chef.viewAllDishes")}
           Icon={AlignJustify}
           path="/chef/confirm-order"
           isOpen={isOpen}
@@ -36,16 +41,18 @@ const NavChef = ({ isOpen }: { isOpen: boolean }) => {
             />
           ))}
       </div>
-      <Link
-        to="/chef/duplicate-food"
-        className={`flex items-center justify-center w-full h-12 mt-3 rounded-lg  font-semibold  transition duration-200 ease-in-out ${
-          location.pathname === "/chef/duplicate-food"
-            ? "bg-secondary-100 text-primary-100 border-2 border-primary-100"
-            : "bg-primary-100 text-white"
-        }`}
-      >
-        Món trùng lặp
-      </Link>
+      {!isChef && (
+        <Link
+          to="/chef/duplicate-food"
+          className={`flex items-center justify-center w-full h-12 mt-3 rounded-lg  font-semibold  transition duration-200 ease-in-out ${
+            location.pathname === "/chef/duplicate-food"
+              ? "bg-secondary-100 text-primary-100 border-2 border-primary-100"
+              : "bg-primary-100 text-white"
+          }`}
+        >
+          {t("chef.duplicateDishes")}
+        </Link>
+      )}
       <Link
         to="/chef/history-food"
         className={`flex items-center justify-center w-full h-12 mt-3 rounded-lg  font-semibold  transition duration-200 ease-in-out ${
@@ -53,7 +60,7 @@ const NavChef = ({ isOpen }: { isOpen: boolean }) => {
             ? "bg-secondary-100 text-blue-500 border-2 border-blue-500"
             : "bg-blue-500 text-white"
         }`}
-      >Món đã hoàn thành</Link>
+      >{t("chef.completedDishes")}</Link>
     </div>
   );
 };

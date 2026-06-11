@@ -12,6 +12,7 @@ import {
 } from "../../ui/Table";
 import { toast } from "sonner";
 import Alert from "../Alert";
+import { useTranslation } from "react-i18next";
 
 
 interface Order{
@@ -26,6 +27,7 @@ const SelectChef = ({
   setIsModalOpenChef: (value: boolean) => void;
   order: Order;
 }) => {
+  const { t } = useTranslation();
   const { data, refetch } = useGetAllChefForCookingQuery();
   const [chooseChef] = useChooseChefForCookingMutation();
 
@@ -37,9 +39,9 @@ const SelectChef = ({
       }).unwrap();
       refetch();
       setIsModalOpenChef(false)
-      toast.success("Giao món thành công");
+      toast.success(t("chef.deliverSuccess"));
     } catch {
-      toast.error("Giao món không thành công");
+      toast.error(t("chef.deliverFail"));
     }
   };
 
@@ -49,7 +51,7 @@ const SelectChef = ({
       <div className="bg-white w-[900px] max-w-[95vw] max-w-full h-[579px] shadow-lg overflow-auto mb-[80px] fixed top-0 left-1/2 transform -translate-x-1/2 z-50 mt-10 flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-primary-100 to-primary-400 text-white text-lg font-bold h-[65px] p-4 flex justify-center items-center sticky top-0 z-10">
-          <p>Chọn nhân viên</p>
+          <p>{t("chef.selectStaff")}</p>
         </div>
 
         {/* Modal Body */}
@@ -58,15 +60,15 @@ const SelectChef = ({
             <Table className="w-full">
               <TableHeader className="text-sm text-black">
                 <TableRow>
-                  <TableHead className="p-2 w-[5%] text-center">STT</TableHead>
+                  <TableHead className="p-2 w-[5%] text-center">{t("table.stt")}</TableHead>
                   <TableHead className="p-2 w-[10%] text-center">
-                    Tên bếp
+                    {t("chef.chefName")}
                   </TableHead>
                   <TableHead className="p-2 w-[5%] text-center">
-                    Trạng thái
+                    {t("table.status")}
                   </TableHead>
                   <TableHead className="p-2 w-[10%] text-center">
-                    Chức năng
+                    {t("table.actions")}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -79,16 +81,20 @@ const SelectChef = ({
                     <TableCell className="p-2 t">
                       <div className="w-full justify-center flex">
                         <Alert
-                          open="Giao món"
-                          btn1="Hủy"
-                          btn2="Đồng ý"
-                          description="Chọn đầu bếp để nấu món!"
-                          title="Chọn đầu bếp này?"
+                          open={t("chef.deliver")}
+                          btn1={t("common.cancel")}
+                          btn2={t("common.agree")}
+                          description={t("chef.selectChefDesc")}
+                          title={t("chef.selectChefTitle")}
                           handleBtn1={() => {}}
                           handleBtn2={() => handleChooseChef(chef._id)}
-                          disabled={chef.status !== "STANDBY"}
+                          disabled={
+                            chef.status !== "STANDBY" &&
+                            chef.status !== "COOKING"
+                          }
                           className={`text-white !w-fit  px-3 py-1 rounded-xl whitespace-nowrap ${
-                            chef.status !== "STANDBY"
+                            chef.status !== "STANDBY" &&
+                            chef.status !== "COOKING"
                               ? "bg-slate-400"
                               : "bg-primary-100"
                           }`}
@@ -108,7 +114,7 @@ const SelectChef = ({
             className="h-8 w-[100px] text-black border border-yellow-500 rounded-2xl hover:bg-yellow-500 hover:text-white transition"
             onClick={() => setIsModalOpenChef(false)}
           >
-            Đóng
+            {t("common.close")}
           </button>
         </div>
       </div>

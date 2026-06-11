@@ -68,6 +68,36 @@ export default class OrderController extends BaseController {
     }
   };
 
+  // [GET] /orders/ordered/table/:tableId/user/:userId — đơn của 1 khách tại 1 bàn
+  public getActiveOrderByUserAndTable = async (
+    req: Request,
+    res: Response
+  ) => {
+    try {
+      const { tableId, userId } = req.params;
+      const order = await this.orderService.getActiveOrderByUserAndTable(
+        tableId,
+        userId
+      );
+      return this.sendResponse(res, 200, { success: true, order });
+    } catch (error) {
+      log("Error fetching order by user & table:", error);
+      return this.sendError(res, 500, "Internal Server Error!");
+    }
+  };
+
+  // [GET] /orders/ordered/table/:tableId/all — tất cả đơn đang hoạt động của 1 bàn
+  public getActiveOrdersByTable = async (req: Request, res: Response) => {
+    try {
+      const tableId = req.params.tableId;
+      const orders = await this.orderService.getActiveOrdersByTable(tableId);
+      return this.sendResponse(res, 200, { success: true, orders });
+    } catch (error) {
+      log("Error fetching active orders by table:", error);
+      return this.sendError(res, 500, "Internal Server Error!");
+    }
+  };
+
   // [GET] orders/ordered/user/:userId
   public getOrderByUserId = async (req: Request, res: Response) => {
     try {

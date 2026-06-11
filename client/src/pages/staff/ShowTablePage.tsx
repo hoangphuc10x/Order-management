@@ -6,8 +6,10 @@ import { socket } from "@/provider/SocketProvider";
 import { useGetAllTablesQuery } from "@/service/tableApi";
 import { BellRing } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const ShowTablePage = () => {
+  const { t } = useTranslation();
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<Record<string, boolean>>(
     {}
@@ -65,7 +67,7 @@ const ShowTablePage = () => {
     <div className="flex flex-col h-full relative">
       {/* Header */}
       <div className="h-16 flex w-full justify-between items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
-        <h3 className="text-white font-bold text-xl">Quản lý bàn</h3>
+        <h3 className="text-white font-bold text-xl">{t("managerTables.title")}</h3>
       </div>
 
       {/* Danh sách bàn */}

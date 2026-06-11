@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import TableIcon from "../../icons/TableIcon";
 import DishIcon from "../../icons/DishIcon";
 import PeopleIcon from "../../icons/PeopleIcon";
@@ -9,47 +10,48 @@ import DashboardIcon from "../../icons/DashboardIcon";
 import DiscountIcon from "../../icons/DiscountIcon";
 
 const NavAdmin = ({ isOpen }: { isOpen: boolean }) => {
+  const { t } = useTranslation();
   return (
     <div className="w-full h-full bg-white border-r border-gray-200 py-4 overflow-y-auto">
       <div className="w-full flex flex-col gap-1 px-2">
         <ItemNavbar
-          label="Bảng điều khiển"
+          label={t("navAdmin.dashboard")}
           Icon={DashboardIcon}
           path="/dashboard"
           isOpen={isOpen}
         />
         <ItemNavbar
-          label="Quản lý bàn"
+          label={t("navAdmin.tables")}
           Icon={TableIcon}
           path="/manage-tables"
           isOpen={isOpen}
         />
         <ItemNavbar
-          label="Quản lý món ăn"
+          label={t("navAdmin.foods")}
           Icon={DishIcon}
           path="/manager-foods"
           isOpen={isOpen}
         />
         <ItemNavbar
-          label="Quản lý nhân viên"
+          label={t("navAdmin.staffs")}
           Icon={PeopleIcon}
           path="/manager-staffs"
           isOpen={isOpen}
         />
         <ItemNavbar
-          label="Quản lý doanh thu"
+          label={t("navAdmin.revenues")}
           Icon={MoneyIcon}
           path="/manager-revenues"
           isOpen={isOpen}
         />
         <ItemNavbar
-          label="Tạo QR thanh toán"
+          label={t("navAdmin.qr")}
           Icon={QrIcon}
           path="/createqr-payment"
           isOpen={isOpen}
         />
         <ItemNavbar
-          label="Mã giảm giá"
+          label={t("navAdmin.discounts")}
           Icon={DiscountIcon}
           path="/discounts"
           isOpen={isOpen}

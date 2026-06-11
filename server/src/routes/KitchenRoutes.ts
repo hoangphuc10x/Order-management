@@ -34,6 +34,8 @@ export default class KitchenRouters extends BaseRoutes {
     this.router.get("/get-all-chef-cooking", authMiddleware,authorizeRoles(["manager","chef_head"]),this.kitchenController.getChefList);
     // xem đầu bếp nào đang nấu món nào
     this.router.get("/get-items-by-chef/:id", authMiddleware,authorizeRoles(["manager","chef_head"]),this.kitchenController.getItemsByChef);
+    // món được giao cho chính đầu bếp đang đăng nhập (lấy theo token)
+    this.router.get("/my-items", authMiddleware,authorizeRoles(["chef","chef_head","manager"]),this.kitchenController.getMyItems);
     // chọn bếp nào nấu món nào
     this.router.patch("/assign-chef-cooking/", authMiddleware,authorizeRoles(["manager","chef_head"]),this.kitchenController.assignChefToKitchenItem);
     // dổi trạng thái của đầu bếp

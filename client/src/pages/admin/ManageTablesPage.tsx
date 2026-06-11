@@ -14,8 +14,10 @@ import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 // import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const ManageTablesPage = () => {
+  const { t } = useTranslation();
   const [showFormCreateTable, setShowFormCreateTable] = useState(false);
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [showQRTable, setShowQRTable] = useState<string | null>(null);
@@ -34,7 +36,7 @@ const ManageTablesPage = () => {
 
   useEffect(() => {
     if (isDeleteSucces) {
-      toast.success("Xóa bàn thành công!");
+      toast.success(t("managerTables.deleteSuccess"));
     }
   }, [isDeleteSucces]);
 
@@ -46,13 +48,13 @@ const ManageTablesPage = () => {
     <div className="flex flex-col h-full w-full ">
       {/* Header */}
       <div className="h-16 flex w-full justify-between items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
-        <h3 className="text-white font-bold text-xl">Quản lý bàn</h3>
+        <h3 className="text-white font-bold text-xl">{t("managerTables.title")}</h3>
         <button
           className="flex gap-1 py-1 px-3 items-center text-white border bg-primary-100 border-[#6D28D9] hover:bg-yellow-300 rounded-xl"
           onClick={() => setShowFormCreateTable(true)}
         >
           <Plus size={20} />
-          Thêm bàn
+          {t("managerTables.addTable")}
         </button>
       </div>
 
@@ -83,10 +85,10 @@ const ManageTablesPage = () => {
             </div>
             <div className="absolute flex justify-center items-center w-10 h-10 rounded-full bg-white text-primary-100 top-1 right-1 hover:bg-yellow-600">
               <Alert
-                btn1="Hủy"
-                btn2="Xóa"
-                description="Xóa bàn khỏi dữ liệu của nhà hàng"
-                title="Bạn có chắc chắn xóa không?"
+                btn1={t("common.cancel")}
+                btn2={t("common.delete")}
+                description={t("managerTables.deleteDesc")}
+                title={t("common.confirmDelete")}
                 Icon={Trash2}
                 handleBtn2={async () => {
                   await deleteTable({ id: table._id });

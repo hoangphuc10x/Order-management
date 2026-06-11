@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { OrderedOfTable, useUpdateOrderMutation } from "@/service/orderApi";
 import { STATUS } from "@/enum/status";
 import { formatMoneyVND } from "../format/FormatMoney";
+import { useTranslation } from "react-i18next";
 
 const Bill = ({
   setSelectedTable,
@@ -21,11 +22,12 @@ const Bill = ({
   data: OrderedOfTable;
   setSelectedTable: (table: null | string) => void;
 }) => {
+  const { t } = useTranslation();
   const [updateOrder, { isSuccess }] = useUpdateOrderMutation();
   useEffect(() => {
     if (isSuccess) {
       setSelectedTable(null);
-      toast.success("Xác nhận thành công");
+      toast.success(t("tableDetail.confirmSuccess"));
     }
   }, [isSuccess, setSelectedTable]);
   const handleExportInvoice = (id: string) => {
@@ -35,7 +37,7 @@ const Bill = ({
     <div className=" bg-white sm:w-[60vw]  shadow-lg flex flex-col gap-2 border-2 border-primary-100 pb-2  w-full h-full sm:h-screen min-h-screen ">
       {/* Header */}
       <div className="bg-gradient-to-r from-primary-100 to-primary-400  text-white text-lg font-bold sm:h-[10%] h-[5%] p-4 flex justify-center items-center relative ">
-        <span className="">Hóa đơn</span>
+        <span className="">{t("bill.title")}</span>
         <X
           size={24}
           className="cursor-pointer absolute right-4"
@@ -47,9 +49,9 @@ const Bill = ({
         <Table className="mt-5 border-b-2 max-h-[70%] overflow-y-scroll">
           <TableHeader className="text-sm text-[#949494]">
             <TableRow className="h-fit">
-              <TableHead className=" w-[50%]">Tên món</TableHead>
-              <TableHead className="text-center w-[25%]">Số lượng</TableHead>
-              <TableHead className="text-center w-[25%]">giá</TableHead>
+              <TableHead className=" w-[50%]">{t("table.name")}</TableHead>
+              <TableHead className="text-center w-[25%]">{t("table.quantity")}</TableHead>
+              <TableHead className="text-center w-[25%]">{t("bill.price")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="overflow-y-auto">
@@ -79,9 +81,9 @@ const Bill = ({
           </TableBody>
         </Table>
         <div className="w-full flex flex-col gap-1 border-2 border-primary-100 rounded-lg mt-8 px-2 py-1 text-xs lg:text-base">
-          <span>Thông tin thanh toán</span>
+          <span>{t("cart.paymentInfo")}</span>
           <div className="flex justify-between">
-            <span>Tổng tiền món ăn:</span>
+            <span>{t("bill.foodTotalLabel")}</span>
             <span>
               {formatMoneyVND(
                 Number(
@@ -93,7 +95,7 @@ const Bill = ({
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Mã giảm giá:</span>
+            <span>{t("bill.discountLabel")}</span>
             {data.order.discountPercent ? (
               <span className="text-primary-100">
                 {data.order.discountPercent} %
@@ -105,7 +107,7 @@ const Bill = ({
             )}
           </div>
           <div className="flex justify-between">
-            <span>Tổng tiền</span>
+            <span>{t("cart.total")}</span>
             <span>
               {formatMoneyVND(
                 Number(
@@ -131,7 +133,7 @@ const Bill = ({
                 data?.order._id && handleExportInvoice(data.order._id)
               }
             >
-              Hoàn thành
+              {t("common.complete")}
             </button>
           </div>
         </div>

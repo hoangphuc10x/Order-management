@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Input from "@/ui/Input";
 import {  Trash2 } from "lucide-react";
 import {
@@ -14,6 +15,7 @@ import { useGetOrderStartEndQuery } from "@/service/adminAPI";
 import dayjs from "dayjs";
 
 const ManagerRevenues = () => {
+  const { t } = useTranslation();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -31,21 +33,21 @@ const ManagerRevenues = () => {
 
   useEffect(() => {
     if (isError) {
-      toast.error("Có lỗi xảy ra khi tải dữ liệu.");
+      toast.error(t("revenues.loadError"));
     }
   }, [isError]);
 
   return (
     <div className="size-full">
       <div className="h-16 flex w-full items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
-        <h3 className="text-white font-bold text-xl">Quản lý doanh thu</h3>
+        <h3 className="text-white font-bold text-xl">{t("revenues.title")}</h3>
        
       </div>
 
       <div className="p-6">
         <div className="flex justify-end gap-4 mb-4 ">
           <div>
-            <p className="font-bold mb-2 text-lg">Ngày bắt đầu</p>
+            <p className="font-bold mb-2 text-lg">{t("revenues.startDate")}</p>
             <Input
               type="date"
               value={startDate}
@@ -55,7 +57,7 @@ const ManagerRevenues = () => {
             />
           </div>
           <div>
-            <p className="font-bold mb-2 text-lg">Ngày kết thúc</p>
+            <p className="font-bold mb-2 text-lg">{t("revenues.endDate")}</p>
             <Input
               type="date"
               value={endDate}
@@ -68,11 +70,11 @@ const ManagerRevenues = () => {
         </div>
 
         {/* Show loading state while fetching data */}
-        {isLoading && <p>Đang tải dữ liệu...</p>}
+        {isLoading && <p>{t("common.loadingData")}</p>}
 
         {/* Render error message if the API call fails */}
         {isError && (
-          <p className="text-red-500">Không thể tải dữ liệu doanh thu.</p>
+          <p className="text-red-500">{t("revenues.loadFail")}</p>
         )}
 
         {/* Display table when data is available */}
@@ -80,16 +82,16 @@ const ManagerRevenues = () => {
           <Table className="mt-5">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[10%]">STT</TableHead>
+                <TableHead className="w-[10%]">{t("table.stt")}</TableHead>
                 <TableHead className="text-center w-[30%]">
-                  Số điện thoại
+                  {t("revenues.phone")}
                 </TableHead>
-                <TableHead className="text-center w-[20%]">Bàn</TableHead>
-                <TableHead className="text-center w-[20%]">Ngày</TableHead>
+                <TableHead className="text-center w-[20%]">{t("revenues.table")}</TableHead>
+                <TableHead className="text-center w-[20%]">{t("revenues.date")}</TableHead>
                 <TableHead className="text-center w-[20%]">
-                  Thành tiền
+                  {t("revenues.total")}
                 </TableHead>
-                <TableHead className="text-center w-[10%]">Chức năng</TableHead>
+                <TableHead className="text-center w-[10%]">{t("table.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -121,7 +123,7 @@ const ManagerRevenues = () => {
                   </TableCell>
                   <TableCell className="text-center">
                     <button className="flex items-center gap-1 bg-[#ACACAC] hover:bg-slate-500 text-white px-3 py-1 rounded-2xl">
-                      <Trash2 size={16} /> Xóa
+                      <Trash2 size={16} /> {t("common.delete")}
                     </button>
                   </TableCell>
                 </TableRow>
@@ -132,7 +134,7 @@ const ManagerRevenues = () => {
 
         {/* Display message if no data is found */}
         {isSuccess && data?.result?.length === 0 && (
-          <p>Không có dữ liệu doanh thu cho ngày này.</p>
+          <p>{t("revenues.noData")}</p>
         )}
       </div>
     </div>

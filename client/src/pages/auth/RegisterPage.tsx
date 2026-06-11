@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -18,35 +20,6 @@ interface RegisterFormData {
   role: "staff" | "chef";
 }
 
-const formSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Email không hợp lệ")
-    .required("Vui lòng nhập email")
-    .matches(/^\S+$/, "Không được chứa khoảng trắng"),
-  password: yup
-    .string()
-    .required("Vui lòng nhập mật khẩu")
-    .matches(/^\S+$/, "Không được chứa khoảng trắng"),
-  confirmPassword: yup
-    .string()
-    .required("Vui lòng xác nhận mật khẩu")
-    .oneOf([yup.ref("password")], "Mật khẩu không khớp"),
-  username: yup
-    .string()
-    .required("Vui lòng nhập tên tài khoản")
-    .matches(/^\S+$/, "Không được chứa khoảng trắng"),
-  phone: yup
-    .string()
-    .matches(/^(0|\+84)\d{9}$/, "Số điện thoại không hợp lệ")
-    .required("Vui lòng nhập số điện thoại"),
-  fulname: yup.string().required("Vui lòng nhập họ tên"),
-  role: yup
-    .string()
-    .oneOf(["staff", "chef"], "Vai trò không hợp lệ")
-    .required("Vui lòng chọn vai trò"),
-});
-
 interface Err {
   data: {
     error: string;
@@ -55,8 +28,42 @@ interface Err {
 }
 
 const RegisterPage = () => {
+  const { t } = useTranslation();
   const [registerMutation] = useRegisterMutation();
   const navigate = useNavigate();
+
+  const formSchema = useMemo(
+    () =>
+      yup.object().shape({
+        email: yup
+          .string()
+          .email(t("auth.emailInvalid"))
+          .required(t("auth.emailRequired"))
+          .matches(/^\S+$/, t("auth.noWhitespace")),
+        password: yup
+          .string()
+          .required(t("auth.passwordRequired"))
+          .matches(/^\S+$/, t("auth.noWhitespace")),
+        confirmPassword: yup
+          .string()
+          .required(t("auth.confirmPasswordRequired"))
+          .oneOf([yup.ref("password")], t("auth.passwordMismatch")),
+        username: yup
+          .string()
+          .required(t("auth.usernameRequired"))
+          .matches(/^\S+$/, t("auth.noWhitespace")),
+        phone: yup
+          .string()
+          .matches(/^(0|\+84)\d{9}$/, t("auth.phoneInvalid"))
+          .required(t("auth.phoneRequired")),
+        fulname: yup.string().required(t("auth.fullNameRequired")),
+        role: yup
+          .string()
+          .oneOf(["staff", "chef"], t("auth.roleInvalid"))
+          .required(t("auth.roleRequired")),
+      }),
+    [t]
+  );
 
   const {
     control,
@@ -80,24 +87,24 @@ const RegisterPage = () => {
       }).unwrap();
 
       if (res.user) {
-        toast.success("Đăng ký thành công");
+        toast.success(t("auth.registerSuccess"));
         navigate("/login/admin");
       }
     } catch (e: unknown) {
       const error = e as Err;
       if (error.data.error === "Phone of user is already exist") {
-        toast.error("Số điện thoại đã tồn tại! Vui lòng nhập số khác");
+        toast.error(t("auth.phoneExists"));
       } else if (error.data.error === "UserName is already exist") {
-        toast.error("Tên tài khoản đã tồn tại! Vui lòng nhập tên khác");
+        toast.error(t("auth.usernameExists"));
       } else if (error.data.error === "Email is already exist") {
-        toast.error("Email đã tồn tại! Vui lòng nhập email khác");
+        toast.error(t("auth.emailExists"));
       }
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center absolute h-fit top-4 left-0 w-full px-6 sm:w-[496px] sm:left-32 sm:px-0">
-      <p className="text-3xl font-bold mb-12 mt-7 text-white">Đăng Ký</p>
+      <p className="text-3xl font-bold mb-12 mt-7 text-white">{t("auth.registerTitle")}</p>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <FormField
           className="mb-4 "
@@ -106,7 +113,7 @@ const RegisterPage = () => {
           error={errors.fulname}
           control={control}
           type="text"
-          placeholder="Tên đầy đủ"
+          placeholder={t("auth.fullName")}
         />
         <div className="flex gap-2 mb-4">
           <FormField
@@ -115,7 +122,7 @@ const RegisterPage = () => {
             error={errors.username}
             control={control}
             type="text"
-            placeholder="Tên tài khoản"
+            placeholder={t("auth.username")}
           />
           <FormField
             name="phone"
@@ -123,7 +130,7 @@ const RegisterPage = () => {
             error={errors.phone}
             control={control}
             type="text"
-            placeholder="Số điện thoại"
+            placeholder={t("auth.phone")}
           />
         </div>
         <FormField
@@ -133,7 +140,7 @@ const RegisterPage = () => {
           error={errors.email}
           control={control}
           type="email"
-          placeholder="Email"
+          placeholder={t("auth.email")}
         />
         <div className="mb-4 w-full">
           <div className="relative w-full h-12">
@@ -145,8 +152,8 @@ const RegisterPage = () => {
                   {...field}
                   className="w-full px-4 py-3 pl-10 text-black bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none appearance-none"
                 >
-                  <option value="staff">Nhân viên</option>
-                  <option value="chef">Đầu bếp</option>
+                  <option value="staff">{t("roles.staff")}</option>
+                  <option value="chef">{t("auth.roleChef")}</option>
                 </select>
               )}
             />
@@ -165,7 +172,7 @@ const RegisterPage = () => {
           error={errors.password}
           control={control}
           type="password"
-          placeholder="Mật khẩu"
+          placeholder={t("auth.password")}
         />
         <FormField
           className="mb-4"
@@ -174,30 +181,30 @@ const RegisterPage = () => {
           error={errors.confirmPassword}
           control={control}
           type="password"
-          placeholder="Xác nhận mật khẩu"
+          placeholder={t("auth.confirmPassword")}
         />
         <button
           type="submit"
           className="w-full py-3 text-white font-semibold bg-gradient-to-r from-primary-100 to-primary-400 rounded-lg hover:opacity-90 shadow-md transition-opacity"
         >
-          Đăng Ký
+          {t("auth.registerBtn")}
         </button>
       </form>
       <Link
         to="/login/admin"
         className="text-xl text-gray-200 hover:text-white my-4"
       >
-        Quay lại đăng nhập
+        {t("auth.backToLogin")}
       </Link>
       <span className="text-sm text-gray-300 mb-7">
-        Liên kết tài khoản của bạn để tiếp tục sử dụng dịch vụ
+        {t("auth.linkAccount")}
       </span>
       <Link
         to=""
         className="w-full bg-white rounded-lg py-2 text-primary gap-2 justify-center flex border-2 border-yellow-400 "
       >
         <Google />
-        Tiếp tục với Google
+        {t("auth.continueGoogle")}
       </Link>
     </div>
   );

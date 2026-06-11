@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { useState } from "react";
 import { Bar } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -24,6 +25,7 @@ ChartJS.register(
 );
 
 const FiguresPostChart = () => {
+  const { t } = useTranslation();
   const [year] = useState<string | null>("");
 
   // Provide a fallback year (e.g., current year) if `year` is null or empty
@@ -62,7 +64,7 @@ const FiguresPostChart = () => {
     labels: postLabels,
     datasets: [
       {
-        label: "Bài viết",
+        label: t("chart.posts"),
         data: monthlyRevenue,
         backgroundColor: "#7C3AED",
         borderRadius: 4,
@@ -83,7 +85,7 @@ const FiguresPostChart = () => {
       },
       title: {
         display: true,
-        text: "Thống kê bài viết",
+        text: t("chart.postStats"),
         align: "start" as const,
         font: {
           size: 20,

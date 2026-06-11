@@ -3,8 +3,10 @@ import { socket } from "@/provider/SocketProvider";
 import {
   OrderItem,
   useGetAllOrderForKitchenQuery,
+  useGetMyKitchenItemsQuery,
   useUpdateOrderStatusMutation,
 } from "@/service/kitchenApi";
+import { useUserInfo } from "@/hook/auth";
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -18,8 +20,10 @@ import SelectChef from "@/components/chef/SelectChef";
 import CheckTable from "@/components/chef/CheckTable";
 import { STATUS } from "@/enum/status";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const ReceiveListFood = () => {
+  const { t } = useTranslation();
   const [isPenđing, setIsPending] = useState("PENDING");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenChef, setIsModalOpenChef] = useState(false);
@@ -28,9 +32,15 @@ const ReceiveListFood = () => {
   const [itemId, setItemId] = useState("");
 
 
-  const { data, isLoading, refetch } = useGetAllOrderForKitchenQuery();
+  const { role } = useUserInfo();
+  const isChef = role === "chef";
+
+  // Đầu bếp thường chỉ thấy món được giao cho mình; bếp trưởng/quản lý thấy tất cả.
+  const allQuery = useGetAllOrderForKitchenQuery(undefined, { skip: isChef });
+  const myQuery = useGetMyKitchenItemsQuery(undefined, { skip: !isChef });
+  const { data, isLoading, refetch } = isChef ? myQuery : allQuery;
   const [updateOrderItem] = useUpdateOrderStatusMutation();
-  
+
   useEffect(() => {
     socket.on("tableStatusChanged", (data) => {
       if (data) {
@@ -38,6 +48,11 @@ const ReceiveListFood = () => {
       }
     });
     socket.on("kitchenStatusUpdated", (data) => {
+      if (data) {
+        refetch();
+      }
+    });
+    socket.on("chefAssigned", (data) => {
       if (data) {
         refetch();
       }
@@ -55,10 +70,11 @@ const ReceiveListFood = () => {
     return () => {
       socket.off("tableStatusChanged");
       socket.off("kitchenStatusUpdated");
+      socket.off("chefAssigned");
       socket.off("orderStatusChanged");
       socket.off("orderItemStatusUpdated");
     };
-  },[]);
+  }, [refetch]);
 
   if (isLoading) {
     return <Loading />;
@@ -73,7 +89,7 @@ const ReceiveListFood = () => {
         status,
         orderItemIds,
       }).unwrap();
-      toast.success("Cập nhật trạng thái món ăn thành công");
+      toast.success(t("chef.updateStatusSuccess2"));
       refetch();
     } catch (error) {
       console.error("Error updating order status", error);
@@ -96,19 +112,19 @@ const ReceiveListFood = () => {
   return (
     <div className="flex flex-col flex-1 h-full">
       <div className="h-16 flex w-full items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
-        <h3 className="text-white font-bold text-xl">Tất cả món</h3>
+        <h3 className="text-white font-bold text-xl">{t("chef.allDishes")}</h3>
         <div className="ml-auto flex gap-2">
           <button
             onClick={() => setIsPending("PENDING")}
             className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none transition transform hover:scale-105 active:bg-yellow-700 border "
           >
-            Món đợi xử lý
+            {t("chef.pendingFilter")}
           </button>
           <button
             onClick={() => setIsPending("PROCESSING")}
             className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none transition transform hover:scale-105 active:bg-green-700 border "
           >
-            Món đang làm
+            {t("chef.cookingFilter")}
           </button>
         </div>
       </div>
@@ -116,21 +132,26 @@ const ReceiveListFood = () => {
         <Table className="w-full">
           <TableHeader className="text-sm text-black">
             <TableRow>
-              <TableHead className="p-2 w-[5%] text-center">STT</TableHead>
+              <TableHead className="p-2 w-[5%] text-center">{t("table.stt")}</TableHead>
               <TableHead className="p-2 w-[25%] text-center">
-                Tên món ăn
+                {t("table.dishName")}
               </TableHead>
               <TableHead className="p-2 w-[15%] text-center">
-                Số lượng món
+                {t("table.quantityDish")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Thời gian cập nhật
+                {t("table.updateTime")}
               </TableHead>
               <TableHead className="p-2 w-[10%] text-center">
-                Trạng thái
+                {t("table.status")}
               </TableHead>
+              {!isChef && (
+                <TableHead className="p-2 w-[10%] text-center">
+                  {t("chef.chefName")}
+                </TableHead>
+              )}
               <TableHead className="p-2 w-[10%] text-center">
-                Chức năng
+                {t("table.actions")}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -151,39 +172,65 @@ const ReceiveListFood = () => {
                   </TableCell>
                   <TableCell className="p-2 text-center">
                     {order.status === "PENDING" ? (
-                      <span className="text-yellow-500">Chờ xử lý</span>
+                      <span className="text-yellow-500">{t("status.waiting")}</span>
                     ) : order.status === "PROCESSING" ? (
-                      <span className="text-green-700">Đang chế biến</span>
+                      <span className="text-green-700">{t("status.processing")}</span>
                     ) : (
-                      <span className="text-blue-600">Đã hoàn thành</span>
+                      <span className="text-blue-600">{t("status.completed")}</span>
                     )}
                   </TableCell>
+                  {!isChef && (
+                    <TableCell className="p-2 text-center">
+                      {order.fulname ? (
+                        <span className="text-primary-100">{order.fulname}</span>
+                      ) : (
+                        <span className="text-slate-400 italic">
+                          {t("chef.notAssigned")}
+                        </span>
+                      )}
+                    </TableCell>
+                  )}
                   <TableCell className="p-2 text-center">
                     <div className="flex gap-2 justify-center items-center">
                       <button
                         onClick={() => handleModalToggle(order)}
                         className="bg-blue-500 hover:bg-blue-800 text-white px-3 py-1 rounded-xl whitespace-nowrap"
                       >
-                        Xem bàn
+                        {t("chef.viewTable")}
                       </button>
-                      {isPenđing === STATUS.PENDING ? (
-                        <button
-                          onClick={() => handleModalAllChef(order)}
-                          className="bg-primary-100 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
-                        >
-                          Chọn đầu bếp
-                        </button>
+                      {isChef ? (
+                        isPenđing === STATUS.PENDING ? (
+                          <button
+                            onClick={() =>
+                              handleUpdateOrderStatus(STATUS.PROCESSING, [
+                                order.orderItemId,
+                              ])
+                            }
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                          >
+                            {t("chef.startCooking")}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleUpdateOrderStatus(STATUS.COMPLETED, [
+                                order.orderItemId,
+                              ])
+                            }
+                            className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                          >
+                            {t("common.complete")}
+                          </button>
+                        )
                       ) : (
-                        <button
-                          onClick={() =>
-                            handleUpdateOrderStatus(STATUS.COMPLETED, [
-                              order.orderItemId,
-                            ])
-                          }
-                          className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
-                        >
-                          Hoàn thành
-                        </button>
+                        isPenđing === STATUS.PENDING && (
+                          <button
+                            onClick={() => handleModalAllChef(order)}
+                            className="bg-primary-100 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                          >
+                            {t("chef.selectChefBtn")}
+                          </button>
+                        )
                       )}
                     </div>
                   </TableCell>
