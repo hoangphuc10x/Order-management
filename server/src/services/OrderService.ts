@@ -15,6 +15,7 @@ import UserModel from "../models/UserModel";
 import { log, table } from "console";
 import KitchenRepository from "../repositories/KitchenRepository";
 import RevenueModel from "../models/RevenueModel";
+import OrderModel from "../models/OrderModel";
 import DiscountRepository from "../repositories/DiscountRepository";
 import { IDiscount } from "../interfaces/IDiscount";
 
@@ -712,6 +713,47 @@ export default class OrderService {
     io?.emit("orderSentToKitchen", {
       orderId: updatedOrder._id,
       items: updatedOrder.orderItems,
+    });
+
+    // Mỗi bàn chỉ giữ 1 đơn chính: khi 1 đơn được xác nhận thì xoá hẳn các
+    // đơn còn lại cùng bàn và thông báo cho những khách bị xoá.
+    await this.removeOtherOrdersOnConfirm(updatedOrder, session, tableId);
+  }
+
+  // Xoá các đơn khác cùng bàn khi 1 đơn được xác nhận và báo cho khách bị xoá.
+  private async removeOtherOrdersOnConfirm(
+    confirmedOrder: any,
+    session: any,
+    tableId: string
+  ) {
+    const activeOrders = await this.orderRepository.findActiveOrdersByTable(
+      tableId,
+      session
+    );
+    const others = activeOrders.filter(
+      (o) => (o._id as any).toString() !== (confirmedOrder._id as any).toString()
+    );
+    if (others.length === 0) return;
+
+    const ordererName = confirmedOrder.userName || "khách";
+    const otherIds = others.map((o) => o._id);
+
+    // Xoá hẳn món trong bếp và bản ghi đơn của các khách còn lại.
+    await KitchenQueueModel.deleteMany(
+      { orderId: { $in: otherIds } },
+      { session }
+    );
+    await OrderModel.deleteMany({ _id: { $in: otherIds } }, { session });
+
+    // Thông báo realtime cho từng khách bị xoá để chuyển về trang chủ.
+    const io = getIo();
+    others.forEach((o) => {
+      io?.emit("orderRemovedByConfirm", {
+        tableId,
+        userId: (o.userId as any).toString(),
+        orderId: (o._id as any).toString(),
+        ordererName,
+      });
     });
   }
 

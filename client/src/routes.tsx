@@ -3,12 +3,14 @@ import AuthLayout from "./pages/auth/AuthLayout";
 import RegisterPage from "./pages/auth/RegisterPage";
 import LoginPage from "./pages/auth/LoginPage";
 import LoginUserPage from "./pages/auth/LoginUserPage";
+import RoleChoicePage from "./pages/auth/RoleChoicePage";
 import CheckPage from "./pages/auth/CheckPage";
 import RegisterUser from "./pages/auth/RegisterUserPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UserLayout from "./pages/user/UserLayout";
 import HomePage from "./pages/user/HomePage";
-import BlogPage from "./pages/user/BlogPage";
+import ScanTablePage from "./pages/user/ScanTablePage";
+import RequireTable from "./components/auth/RequireTable";
 import DetailItem from "./pages/user/DetailItem";
 import CartPage from "./pages/user/CartPage";
 import OrderedTablePage from "./pages/user/OrderedTablePage";
@@ -51,6 +53,10 @@ export const router = createBrowserRouter([
       },
       {
         path: "/login",
+        element: <RoleChoicePage />,
+      },
+      {
+        path: "/login/customer",
         element: <LoginUserPage />,
       },
       {
@@ -74,30 +80,42 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={["user", "guest"]} />,
         children: [
           {
-            element: <MenuPageLazyLoad />,
-            path: "/menu",
+            // Đã đăng nhập nhưng chưa quét bàn -> trang hướng dẫn quét QR.
+            element: <ScanTablePage />,
+            path: "/scan",
           },
           {
-            element: <DetailItem />,
-            path: "/menu/:id",
-          },
-          {
-            element: <CartPage />,
-            path: "/cart",
-          },
-          {
-            element: <OrderedTablePage />,
-            path: "/ordered/:id",
-          },
-          {
+            // Lịch sử đơn không phụ thuộc bàn -> không cần quét.
             element: <HistoryOrderedPage />,
             path: "/ordered",
           },
+          {
+            // Luồng đặt món yêu cầu đã quét bàn.
+            element: <RequireTable />,
+            children: [
+              {
+                element: <MenuPageLazyLoad />,
+                path: "/menu",
+              },
+              {
+                element: <DetailItem />,
+                path: "/menu/:id",
+              },
+              {
+                element: <CartPage />,
+                path: "/cart",
+              },
+              {
+                element: <OrderedTablePage />,
+                path: "/ordered/:id",
+              },
+              {
+                element: <OrderedTablePage />,
+                path: "/order",
+              },
+            ],
+          },
         ],
-      },
-      {
-        element: <BlogPage />,
-        path: "/blog",
       },
     ],
   },

@@ -34,7 +34,7 @@ const LoginUserPage: React.FC = () => {
     [t]
   );
 
-  const [loginMutation, { isSuccess, data, error, isError }] =
+  const [loginMutation, { isSuccess, data, error, isError, isLoading }] =
     useLoginMutation();
 
   const {
@@ -51,10 +51,7 @@ const LoginUserPage: React.FC = () => {
   const onSubmit = (formData: LoginWithPhone) => {
     try {
       console.log("data", formData);
-      if (!tableInfo._id) {
-        toast.error(t("auth.scanToLogin"));
-        return;
-      }
+      // Cho phép đăng nhập kể cả khi chưa quét bàn; sau đó sẽ hướng dẫn quét.
       loginMutation({
         usernameOrEmail: formData.phoneNumber,
         password: formData.phoneNumber,
@@ -75,7 +72,8 @@ const LoginUserPage: React.FC = () => {
         })
       );
       toast.success(t("auth.loginSuccess"));
-      navigate("/menu");
+      // Chưa quét bàn -> sang trang hướng dẫn quét QR; đã quét -> vào menu.
+      navigate(tableInfo._id ? "/menu" : "/scan");
     }
   }, [isSuccess]);
 
@@ -103,9 +101,10 @@ const LoginUserPage: React.FC = () => {
           />
           <button
             type="submit"
-            className="w-full py-3 text-white font-semibold bg-gradient-to-r from-primary-100 to-primary-400 rounded-lg hover:opacity-90 shadow-md transition-opacity"
+            disabled={isLoading}
+            className="w-full py-3 text-white font-semibold bg-gradient-to-r from-primary-100 to-primary-400 rounded-lg hover:opacity-90 shadow-md transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {t("auth.loginBtn")}
+            {isLoading ? t("common.processing") : t("auth.loginBtn")}
           </button>
         </form>
       </div>

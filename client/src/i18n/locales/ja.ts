@@ -8,7 +8,7 @@ const ja = {
     nav: {
       home: "ホーム",
       menu: "メニュー",
-      blog: "ブログ",
+      order: "注文",
       history: "履歴",
       login: "ログイン",
       dashboard: "管理ページへ",
@@ -24,6 +24,7 @@ const ja = {
       save: "保存",
       saveBtn: "保存",
       saving: "保存中...",
+      processing: "処理中...",
       close: "閉じる",
       confirm: "確認",
       agree: "同意",
@@ -41,6 +42,8 @@ const ja = {
       pending: "待機中",
       waiting: "処理待ち",
       processing: "調理中",
+      inProgress: "進行中",
+      cooking: "調理中",
       done: "完了",
       completed: "完成",
       served: "提供済み",
@@ -95,8 +98,21 @@ const ja = {
       email: "メール",
       rights: "© 2024 Food Order. 無断転載禁止。",
     },
+    scan: {
+      guideTitle: "まだテーブルをスキャンしていません",
+      guideDesc:
+        "下のボタンを押してテーブルのQRコードをスキャンし、注文を始めましょう！",
+      scanBtn: "QRをスキャンして注文",
+      aiming: "テーブルのQRコードを枠内に合わせてください",
+      cameraError:
+        "カメラを起動できません。カメラへのアクセスを許可して再度お試しください。",
+      invalidQr: "無効なQRコードです。テーブルのQRコードをスキャンしてください。",
+    },
     auth: {
       loginTitle: "ログイン",
+      roleChoiceTitle: "どちらでログインしますか？",
+      roleCustomer: "お客様",
+      roleStaff: "スタッフ / 管理者",
       registerTitle: "登録",
       hasAccountQuestion: "すでにアカウントをお持ちですか？",
       haveAccount: "アカウントを持っています",
@@ -238,6 +254,8 @@ const ja = {
       selectStaff: "スタッフを選択",
       chefName: "シェフ名",
       startCooking: "調理開始",
+      tabInProgress: "進行中の料理",
+      tabCooking: "調理中の料理",
       notAssigned: "未割り当て",
       deliver: "料理を割り当て",
       selectChefDesc: "料理を作るシェフを選択してください！",
@@ -398,6 +416,10 @@ const ja = {
       subtotal: "小計",
       requestBill: "会計をリクエスト",
       billRequested: "会計リクエストを送信しました",
+      removedByConfirm:
+        "あなたのテーブルは{{name}}さんが注文しました。追加の注文は{{name}}さんを通してお願いします！",
+      farewellTitle: "ご来店ありがとうございました",
+      farewellDesc: "またのお越しをお待ちしております！",
     },
     detailItem: {
       mainIngredients: "主な材料：",

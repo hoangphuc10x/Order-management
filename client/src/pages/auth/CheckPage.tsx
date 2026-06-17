@@ -2,18 +2,23 @@ import { saveTableInfo } from "@/redux/slices/tableSlice";
 import { clearCart } from "@/redux/slices/orderSlice";
 import { clearOrder } from "@/redux/slices/orderCurrentSlice";
 import { useTableInfo } from "@/hook/table";
+import { useUserInfo } from "@/hook/auth";
 import { useGetAllTablesQuery } from "@/service/tableApi";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { RootState } from "@/redux/store";
 
 
 const CheckPage = () => {
   const { slug } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { slug: currentSlug } = useTableInfo();
+  const { role } = useUserInfo();
+  const token = useSelector((state: RootState) => state.auth.accessToken);
   const { data, isSuccess } = useGetAllTablesQuery();
 
   useEffect(() => {
@@ -27,6 +32,10 @@ const CheckPage = () => {
           dispatch(clearOrder());
         }
         dispatch(saveTableInfo({ tableInfo }));
+        // Đã đăng nhập là khách rồi thì vào thẳng menu, không hỏi đăng nhập nữa.
+        if (token && (role === "user" || role === "guest")) {
+          navigate("/menu");
+        }
       }
     }
   }, [isSuccess, slug]);
@@ -37,7 +46,7 @@ const CheckPage = () => {
           {t("auth.hasAccountQuestion")}
         </p>
         <div className="flex justify-around w-full">
-          <Link to="/login" className=" btn !text-white">
+          <Link to="/login/customer" className=" btn !text-white">
             {t("auth.haveAccount")}
           </Link>
           <Link

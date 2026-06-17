@@ -13,6 +13,7 @@ import {
 import { toast } from "sonner";
 import Alert from "../Alert";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 
 interface Order{
@@ -29,9 +30,11 @@ const SelectChef = ({
 }) => {
   const { t } = useTranslation();
   const { data, refetch } = useGetAllChefForCookingQuery();
-  const [chooseChef] = useChooseChefForCookingMutation();
+  const [chooseChef, { isLoading }] = useChooseChefForCookingMutation();
+  const [assigningId, setAssigningId] = useState<string | null>(null);
 
   const handleChooseChef = async (id: string) => {
+    setAssigningId(id);
     try {
       await chooseChef({
         userId: id,
@@ -42,6 +45,8 @@ const SelectChef = ({
       toast.success(t("chef.deliverSuccess"));
     } catch {
       toast.error(t("chef.deliverFail"));
+    } finally {
+      setAssigningId(null);
     }
   };
 
@@ -81,7 +86,11 @@ const SelectChef = ({
                     <TableCell className="p-2 t">
                       <div className="w-full justify-center flex">
                         <Alert
-                          open={t("chef.deliver")}
+                          open={
+                            assigningId === chef._id
+                              ? t("common.processing")
+                              : t("chef.deliver")
+                          }
                           btn1={t("common.cancel")}
                           btn2={t("common.agree")}
                           description={t("chef.selectChefDesc")}
@@ -89,15 +98,16 @@ const SelectChef = ({
                           handleBtn1={() => {}}
                           handleBtn2={() => handleChooseChef(chef._id)}
                           disabled={
-                            chef.status !== "STANDBY" &&
-                            chef.status !== "COOKING"
+                            isLoading ||
+                            (chef.status !== "STANDBY" &&
+                              chef.status !== "COOKING")
                           }
                           className={`text-white !w-fit  px-3 py-1 rounded-xl whitespace-nowrap ${
                             chef.status !== "STANDBY" &&
                             chef.status !== "COOKING"
                               ? "bg-slate-400"
                               : "bg-primary-100"
-                          }`}
+                          } ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
                         />
                       </div>
                     </TableCell>

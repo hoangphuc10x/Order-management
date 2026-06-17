@@ -29,8 +29,10 @@ interface TableDetailProps {
 const TableDetail = ({ setSelectedTable, id }: TableDetailProps) => {
   const { t } = useTranslation();
   const { data, isLoading, refetch } = useGetActiveOrdersByTableQuery(id);
-  const [updateOrder, { isSuccess }] = useUpdateOrderMutation();
-  const [updateOrderStatus] = useUpdateOrderStatusMutation();
+  const [updateOrder, { isSuccess, isLoading: isConfirming }] =
+    useUpdateOrderMutation();
+  const [updateOrderStatus, { isLoading: isServing }] =
+    useUpdateOrderStatusMutation();
 
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
@@ -208,13 +210,15 @@ const TableDetail = ({ setSelectedTable, id }: TableDetailProps) => {
                         item.status === STATUS.COMPLETED
                           ? "bg-primary-100 !text-white"
                           : " !bg-slate-400"
-                      }`}
-                      disabled={item.status !== STATUS.COMPLETED}
+                      } disabled:opacity-60 disabled:cursor-not-allowed`}
+                      disabled={item.status !== STATUS.COMPLETED || isServing}
                       onClick={() =>
                         handleUpdateStatus(item._id as string, STATUS.SERVED)
                       }
                     >
-                      {item.status === STATUS.SERVED
+                      {isServing
+                        ? t("common.processing")
+                        : item.status === STATUS.SERVED
                         ? t("status.served")
                         : t("tableDetail.serve")}
                     </button>
@@ -228,13 +232,15 @@ const TableDetail = ({ setSelectedTable, id }: TableDetailProps) => {
           {order?.status === STATUS.PENDING && (
             <div className="flex justify-around w-full ">
               <button
-                className="btn !text-white"
+                className="btn !text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={isConfirming}
                 onClick={() => order._id && handleConfirm(order._id)}
               >
-                {t("common.confirm")}
+                {isConfirming ? t("common.processing") : t("common.confirm")}
               </button>
               <button
-                className="btn !border-red-500 border !bg-white !text-red-500"
+                className="btn !border-red-500 border !bg-white !text-red-500 disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={isConfirming}
                 onClick={() => order._id && handleCancelAll(order._id)}
               >
                 {t("common.cancelAlt")}

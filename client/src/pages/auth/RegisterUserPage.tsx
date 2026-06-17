@@ -36,8 +36,10 @@ const RegisterUser: React.FC = () => {
     [t]
   );
 
-  const [registerMutation] = useRegisterMutation();
-  const [loginMutation] = useLoginMutation();
+  const [registerMutation, { isLoading: isRegistering }] =
+    useRegisterMutation();
+  const [loginMutation, { isLoading: isAutoLogin }] = useLoginMutation();
+  const isSubmitting = isRegistering || isAutoLogin;
 
   const {
     control,
@@ -125,9 +127,10 @@ const RegisterUser: React.FC = () => {
           />
           <button
             type="submit"
-            className="w-full py-3 text-white font-semibold bg-gradient-to-r from-primary-100 to-primary-400 rounded-lg hover:opacity-90 shadow-md transition-opacity"
+            disabled={isSubmitting}
+            className="w-full py-3 text-white font-semibold bg-gradient-to-r from-primary-100 to-primary-400 rounded-lg hover:opacity-90 shadow-md transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {t("auth.registerBtn")}
+            {isSubmitting ? t("common.processing") : t("auth.registerBtn")}
           </button>
         </form>
       </div>

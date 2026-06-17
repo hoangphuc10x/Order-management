@@ -10,6 +10,9 @@ import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { useEffect } from "react";
+import { socket } from "@/provider/SocketProvider";
+import { clearOrder } from "@/redux/slices/orderCurrentSlice";
 
 const UserLayout = () => {
   const quantity = useSelector(
@@ -23,6 +26,21 @@ const UserLayout = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Khi đơn của khách bị xoá do 1 khách khác cùng bàn được xác nhận,
+  // chuyển khách về trang chủ kèm thông báo đặt thêm qua người đã đặt.
+  useEffect(() => {
+    const handleRemoved = (data: { userId: string; ordererName: string }) => {
+      if (!data || !_id || data.userId !== _id) return;
+      dispatch(clearOrder());
+      navigate("/");
+      toast.info(t("orderedTable.removedByConfirm", { name: data.ordererName }));
+    };
+    socket.on("orderRemovedByConfirm", handleRemoved);
+    return () => {
+      socket.off("orderRemovedByConfirm", handleRemoved);
+    };
+  }, [_id, dispatch, navigate, t]);
 
   const handleLogout = () => {
     // Guest: quay lại đúng route như vừa được quét QR ở bàn (/:slug/check)
@@ -91,12 +109,14 @@ const UserLayout = () => {
               </Link>
             )}
 
-            <Link
-              to="/blog"
-              className={location.pathname === "/blog" ? "underline" : ""}
-            >
-              {t("nav.blog")}
-            </Link>
+            {(role === "user" || role === "guest") && (
+              <Link
+                to="/order"
+                className={location.pathname === "/order" ? "underline" : ""}
+              >
+                {t("nav.order")}
+              </Link>
+            )}
             {(role === "user" || role === "guest") && (
               <Link
                 to="/ordered"
@@ -112,7 +132,7 @@ const UserLayout = () => {
             <LanguageSwitcher variant="light" />
             {!_id && (
               <Link
-                to="/login/admin"
+                to="/login"
                 className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1 text-sm transition-colors whitespace-nowrap"
               >
                 {t("nav.login")}

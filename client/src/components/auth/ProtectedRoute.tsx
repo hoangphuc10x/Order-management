@@ -15,7 +15,7 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
           (role ?? "").toLowerCase() === "staff" ||
           (role ?? "").toLowerCase() === "chef"
             ? "/login/admin"
-            : "/login"
+            : "/login/customer"
         }
         replace
       />
@@ -24,7 +24,7 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   return allowedRoles.includes(role?.toLowerCase() ?? "") ? (
     <Outlet />
   ) : (
-    <Navigate to="/login" replace />
+    <Navigate to="/login/customer" replace />
   );
 };
 

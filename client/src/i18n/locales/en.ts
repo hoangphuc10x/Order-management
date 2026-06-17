@@ -8,7 +8,7 @@ const en = {
     nav: {
       home: "Home",
       menu: "Menu",
-      blog: "Blog",
+      order: "Order",
       history: "History",
       login: "Login",
       dashboard: "Go to dashboard",
@@ -24,6 +24,7 @@ const en = {
       save: "Save",
       saveBtn: "Save",
       saving: "Saving...",
+      processing: "Processing...",
       close: "Close",
       confirm: "Confirm",
       agree: "OK",
@@ -41,6 +42,8 @@ const en = {
       pending: "Pending",
       waiting: "Waiting",
       processing: "Cooking",
+      inProgress: "In progress",
+      cooking: "Cooking",
       done: "Done",
       completed: "Completed",
       served: "Served",
@@ -96,8 +99,21 @@ const en = {
       email: "Email",
       rights: "© 2024 Food Order. All rights reserved.",
     },
+    scan: {
+      guideTitle: "You haven't scanned a table yet",
+      guideDesc:
+        "Tap the button below to scan the QR code on your table and start ordering!",
+      scanBtn: "Scan QR to order",
+      aiming: "Point the table's QR code into the frame",
+      cameraError:
+        "Cannot open the camera. Please allow camera access and try again.",
+      invalidQr: "Invalid QR code. Please scan the QR code on your table.",
+    },
     auth: {
       loginTitle: "Login",
+      roleChoiceTitle: "Log in as?",
+      roleCustomer: "Customer",
+      roleStaff: "Staff / Manager",
       registerTitle: "Register",
       hasAccountQuestion: "Do you already have an account?",
       haveAccount: "I have an account",
@@ -239,6 +255,8 @@ const en = {
       selectStaff: "Select staff",
       chefName: "Chef name",
       startCooking: "Start cooking",
+      tabInProgress: "Dishes in progress",
+      tabCooking: "Cooking",
       notAssigned: "Not assigned",
       deliver: "Assign dish",
       selectChefDesc: "Select a chef to cook the dish!",
@@ -399,6 +417,10 @@ const en = {
       subtotal: "Subtotal",
       requestBill: "Request the bill",
       billRequested: "Bill request sent",
+      removedByConfirm:
+        "Your table has been ordered by {{name}}. Please order additional dishes through {{name}}!",
+      farewellTitle: "Thank you for dining with us",
+      farewellDesc: "We look forward to seeing you again!",
     },
     detailItem: {
       mainIngredients: "Main ingredients:",

@@ -73,7 +73,7 @@ const redirectToLogin = (role?: string | null) => {
   if (window.location.pathname.startsWith("/login")) return; // tránh lặp vô hạn
   // Nhân sự nội bộ -> đăng nhập quản trị; khách/người dùng -> đăng nhập cho khách
   const isStaff = role === "manager" || role === "staff" || role === "chef" || role === "chef_head";
-  window.location.href = isStaff ? "/login/admin" : "/login";
+  window.location.href = isStaff ? "/login/admin" : "/login/customer";
 };
 
 const baseQueryWithReauth: BaseQueryFn<

@@ -8,7 +8,7 @@ const ko = {
     nav: {
       home: "홈",
       menu: "메뉴",
-      blog: "블로그",
+      order: "주문",
       history: "기록",
       login: "로그인",
       dashboard: "관리 페이지로",
@@ -24,6 +24,7 @@ const ko = {
       save: "저장",
       saveBtn: "저장",
       saving: "저장 중...",
+      processing: "처리 중...",
       close: "닫기",
       confirm: "확인",
       agree: "동의",
@@ -41,6 +42,8 @@ const ko = {
       pending: "대기 중",
       waiting: "처리 대기",
       processing: "조리 중",
+      inProgress: "진행 중",
+      cooking: "조리 중",
       done: "완료",
       completed: "완성",
       served: "제공됨",
@@ -95,8 +98,21 @@ const ko = {
       email: "이메일",
       rights: "© 2024 Food Order. 모든 권리 보유.",
     },
+    scan: {
+      guideTitle: "아직 테이블을 스캔하지 않았습니다",
+      guideDesc:
+        "아래 버튼을 눌러 테이블의 QR 코드를 스캔하고 주문을 시작하세요!",
+      scanBtn: "QR 스캔하여 주문",
+      aiming: "테이블의 QR 코드를 화면 안에 맞춰주세요",
+      cameraError:
+        "카메라를 열 수 없습니다. 카메라 권한을 허용한 후 다시 시도해주세요.",
+      invalidQr: "유효하지 않은 QR 코드입니다. 테이블의 QR 코드를 스캔해주세요.",
+    },
     auth: {
       loginTitle: "로그인",
+      roleChoiceTitle: "어떤 역할로 로그인하시겠어요?",
+      roleCustomer: "고객",
+      roleStaff: "직원 / 관리자",
       registerTitle: "회원가입",
       hasAccountQuestion: "이미 계정이 있으신가요?",
       haveAccount: "계정이 있습니다",
@@ -238,6 +254,8 @@ const ko = {
       selectStaff: "직원 선택",
       chefName: "셰프 이름",
       startCooking: "조리 시작",
+      tabInProgress: "진행 중인 음식",
+      tabCooking: "조리 중인 음식",
       notAssigned: "미배정",
       deliver: "음식 배정",
       selectChefDesc: "음식을 만들 셰프를 선택하세요!",
@@ -398,6 +416,10 @@ const ko = {
       subtotal: "임시 합계",
       requestBill: "계산 요청",
       billRequested: "계산 요청을 보냈습니다",
+      removedByConfirm:
+        "고객님의 테이블은 {{name}}님이 주문했습니다. 추가 주문은 {{name}}님을 통해 해주세요!",
+      farewellTitle: "이용해 주셔서 감사합니다",
+      farewellDesc: "다음에 또 뵙겠습니다!",
     },
     detailItem: {
       mainIngredients: "주재료:",

@@ -36,7 +36,8 @@ const CartPage = () => {
     0
   );
 
-  const [createOrder, { isSuccess, isError, data }] = useCreateOrderMutation();
+  const [createOrder, { isSuccess, isError, data, isLoading }] =
+    useCreateOrderMutation();
 
   useEffect(() => {
     if (isSuccess && data.newOrder._id) {
@@ -128,9 +129,11 @@ const CartPage = () => {
       </div>
       <button
         onClick={handleSubmid}
-        className="bg-primary-100 text-white py-1 px-2 rounded-lg mt-4 flex gap-1 items-center text-xs lg:text-base hover:bg-primary-400"
+        disabled={isLoading}
+        className="bg-primary-100 text-white py-1 px-2 rounded-lg mt-4 flex gap-1 items-center text-xs lg:text-base hover:bg-primary-400 disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {t("cart.submit")} <LogOut className="lg:size-[1.1vw] size-[3vw]" />
+        {isLoading ? t("common.processing") : t("cart.submit")}{" "}
+        <LogOut className="lg:size-[1.1vw] size-[3vw]" />
       </button>
     </div>
   );

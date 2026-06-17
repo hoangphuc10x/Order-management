@@ -49,7 +49,8 @@ const SortFood = () => {
     ? (myQuery.data?.result ?? []).filter((o) => o.categoryId === id)
     : categoryQuery.data ?? [];
 
-  const [updateOrderItem] = useUpdateOrderStatusMutation();
+  const [updateOrderItem, { isLoading: isUpdating }] =
+    useUpdateOrderStatusMutation();
 
   useEffect(() => {
     socket.on("tableStatusChanged", (data) => {
@@ -219,25 +220,27 @@ const SortFood = () => {
                       {isChef ? (
                         isPenđing === STATUS.PENDING ? (
                           <button
+                            disabled={isUpdating}
                             onClick={() =>
                               handleUpdateOrderStatus(STATUS.PROCESSING, [
                                 order.orderItemId,
                               ])
                             }
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
                           >
-                            {t("chef.startCooking")}
+                            {isUpdating ? t("common.processing") : t("chef.startCooking")}
                           </button>
                         ) : (
                           <button
+                            disabled={isUpdating}
                             onClick={() =>
                               handleUpdateOrderStatus(STATUS.COMPLETED, [
                                 order.orderItemId,
                               ])
                             }
-                            className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                            className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
                           >
-                            {t("common.complete")}
+                            {isUpdating ? t("common.processing") : t("common.complete")}
                           </button>
                         )
                       ) : (

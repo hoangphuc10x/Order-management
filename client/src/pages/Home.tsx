@@ -33,10 +33,10 @@ const Home = () => {
             </Link>
 
             <Link
-              to="/blog"
-              className={location.pathname === "/blog" ? "underline" : ""}
+              to="/order"
+              className={location.pathname === "/order" ? "underline" : ""}
             >
-              Diễn đàn
+              Đơn hàng
             </Link>
             <Link
               to="/ordered"

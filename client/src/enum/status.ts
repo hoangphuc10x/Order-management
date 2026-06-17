@@ -10,6 +10,6 @@ export const STATUS = {
   COMPLETED: "COMPLETED", // Đơn hàng đã hoàn tất
   CANCELLED: "CANCELLED",
   PROCESSING: "PROCESSING",
+  COOKING: "COOKING",
   SERVED: "SERVED",
-
 };

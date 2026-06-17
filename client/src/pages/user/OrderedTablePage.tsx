@@ -1,7 +1,9 @@
 import Loading from "@/components/Loading";
 import { STATUS } from "@/enum/status";
+import { FOODSTATUS } from "@/enum/FoodStatus";
 import { socket } from "@/provider/SocketProvider";
 import { addOrderId, clearOrder } from "@/redux/slices/orderCurrentSlice";
+import { clearTableInfo } from "@/redux/slices/tableSlice";
 import {
   useGetActiveOrderByUserAndTableQuery,
   useUpdateOrderMutation,
@@ -25,13 +27,15 @@ const OrderedTablePage = () => {
   const { _id: tableId } = useTableInfo();
   const { _id: userId } = useUserInfo();
   const [isCanceled, setIsCanceled] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   // Lấy đơn theo NGƯỜI và BÀN hiện tại (không dùng orderId cũ có thể bị lẫn bàn).
   const { data, isLoading, refetch, isSuccess, isError } =
     useGetActiveOrderByUserAndTableQuery(
       { tableId: tableId || "", userId: userId || "" },
       { skip: !tableId || !userId }
     );
-  const [updateOrder] = useUpdateOrderMutation();
+  const [updateOrder, { isLoading: isRequestingBill }] =
+    useUpdateOrderMutation();
   const dispatch = useDispatch();
 
   console.log("data", data);
@@ -52,10 +56,16 @@ const OrderedTablePage = () => {
     socket.on("orderStatusChanged", (data) => {
       console.log("orderStatusChanged", data);
       if (data) {
-        if (
-          data.status === STATUS.COMPLETED ||
-          data.status === STATUS.CANCELLED
-        ) {
+        // Chỉ phản hồi sự kiện của đúng bàn khách đang ngồi.
+        const isThisTable = !tableId || String(data.tableId) === String(tableId);
+        if (data.status === STATUS.COMPLETED && isThisTable) {
+          // Thanh toán xong: gỡ đơn + xoá cache bàn của khách và hiện lời tạm biệt.
+          dispatch(clearOrder());
+          dispatch(clearTableInfo());
+          setIsCompleted(true);
+          return;
+        }
+        if (data.status === STATUS.CANCELLED) {
           dispatch(clearOrder());
         }
         refetch();
@@ -71,7 +81,7 @@ const OrderedTablePage = () => {
       socket.off("orderStatusChanged");
       socket.off("orderItemStatusUpdated");
     };
-  }, []);
+  }, [tableId]);
 
   const handlePaymentRequest = async (id: string) => {
     const res = await updateOrder({
@@ -83,6 +93,20 @@ const OrderedTablePage = () => {
     }
   };
   if (isLoading) return <Loading />;
+
+  if (isCompleted) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center gap-3 mt-16 px-6 text-center">
+        <CookingPot className="size-12 text-primary-100" />
+        <h3 className="font-bold text-[4vw] lg:text-[1.6vw] text-primary-100">
+          {t("orderedTable.farewellTitle")}
+        </h3>
+        <span className="text-slate-600 text-[3.2vw] lg:text-[1vw]">
+          {t("orderedTable.farewellDesc")}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -195,13 +219,17 @@ const OrderedTablePage = () => {
                               : "text-green-500"
                           }`}
                         >
-                          {item.status === STATUS.PENDING
+                          {item.status === FOODSTATUS.PENDING
                             ? t("status.pending")
-                            : item.status === STATUS.PROCESSING
+                            : item.status === FOODSTATUS.PROCESSING
                             ? t("status.processing")
-                            : item.status === STATUS.COMPLETED
-                            ? t("status.done")
-                            : t("status.served")}
+                            : item.status === FOODSTATUS.COOKING
+                            ? t("status.cooking")
+                            : item.status === FOODSTATUS.COMPLETED
+                            ? t("status.completed")
+                            : item.status === FOODSTATUS.SERVED
+                            ? t("status.served")
+                            : t("status.waiting")}
                         </span>
                       </div>
                     </div>
@@ -234,12 +262,15 @@ const OrderedTablePage = () => {
               </div>
               {data?.order.status === STATUS.ALL_SERVED && (
                 <button
-                  className="btn !text-black w-fit !bg-green-500"
+                  className="btn !text-black w-fit !bg-green-500 disabled:opacity-60 disabled:cursor-not-allowed"
+                  disabled={isRequestingBill}
                   onClick={() =>
                     data.order._id && handlePaymentRequest(data.order._id)
                   }
                 >
-                  {t("orderedTable.requestBill")}
+                  {isRequestingBill
+                    ? t("common.processing")
+                    : t("orderedTable.requestBill")}
                 </button>
               )}
             </div>

@@ -8,7 +8,7 @@ const vi = {
     nav: {
       home: "Trang chủ",
       menu: "Menu",
-      blog: "Diễn đàn",
+      order: "Đơn hàng",
       history: "Lịch sử",
       login: "Đăng nhập",
       dashboard: "Tới trang quản lý",
@@ -24,6 +24,7 @@ const vi = {
       save: "Lưu",
       saveBtn: "Lưu lại",
       saving: "Đang lưu...",
+      processing: "Đang xử lý...",
       close: "Đóng",
       confirm: "Xác nhận",
       agree: "Đồng ý",
@@ -41,6 +42,8 @@ const vi = {
       pending: "Đang chờ",
       waiting: "Chờ xử lý",
       processing: "Đang chế biến",
+      inProgress: "Đang chế biến",
+      cooking: "Đang nấu",
       done: "Đã xong",
       completed: "Đã hoàn thành",
       served: "Đã phục vụ",
@@ -96,8 +99,21 @@ const vi = {
       email: "Email",
       rights: "© 2024 Food Order. Bảo lưu mọi quyền.",
     },
+    scan: {
+      guideTitle: "Bạn chưa quét bàn",
+      guideDesc:
+        "Nhấn nút bên dưới để quét mã QR trên bàn và bắt đầu đặt món nhé!",
+      scanBtn: "Quét QR đặt món",
+      aiming: "Đưa mã QR trên bàn vào khung để quét",
+      cameraError:
+        "Không thể mở camera. Vui lòng cho phép quyền camera và thử lại.",
+      invalidQr: "Mã QR không hợp lệ. Vui lòng quét mã QR trên bàn.",
+    },
     auth: {
       loginTitle: "Đăng Nhập",
+      roleChoiceTitle: "Bạn đăng nhập với vai trò?",
+      roleCustomer: "Khách hàng",
+      roleStaff: "Nhân viên / Quản lý",
       registerTitle: "Đăng Ký",
       hasAccountQuestion: "Bạn đã có tài khoản chưa?",
       haveAccount: "Đã có tài khoản",
@@ -239,6 +255,8 @@ const vi = {
       selectStaff: "Chọn nhân viên",
       chefName: "Tên bếp",
       startCooking: "Bắt đầu nấu",
+      tabInProgress: "Món đang chế biến",
+      tabCooking: "Món đang nấu",
       notAssigned: "Chưa giao",
       deliver: "Giao món",
       selectChefDesc: "Chọn đầu bếp để nấu món!",
@@ -399,6 +417,10 @@ const vi = {
       subtotal: "Tổng tiền tạm tính",
       requestBill: "Yêu cầu tính tiền",
       billRequested: "Đã gửi yêu cầu tính tiền",
+      removedByConfirm:
+        "Bàn của bạn đã được {{name}} đặt món. Hãy thông qua {{name}} để đặt thêm món nhé!",
+      farewellTitle: "Cảm ơn quý khách đã dùng bữa tại quán",
+      farewellDesc: "Hẹn gặp lại quý khách lần sau!",
     },
     detailItem: {
       mainIngredients: "Thành phần chính:",

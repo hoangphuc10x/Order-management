@@ -24,22 +24,24 @@ import { useTranslation } from "react-i18next";
 
 const ReceiveListFood = () => {
   const { t } = useTranslation();
-  const [isPenđing, setIsPending] = useState("PENDING");
+  const { role } = useUserInfo();
+  const isChef = role === "chef";
+
+  // Tab mặc định: chef bắt đầu ở "đang chế biến" (PROCESSING),
+  // chef_head bắt đầu ở "chờ xử lý" (PENDING).
+  const [tab, setTab] = useState(isChef ? STATUS.PROCESSING : STATUS.PENDING);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenChef, setIsModalOpenChef] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
   const [status, setStatus] = useState("PENDING");
   const [itemId, setItemId] = useState("");
 
-
-  const { role } = useUserInfo();
-  const isChef = role === "chef";
-
   // Đầu bếp thường chỉ thấy món được giao cho mình; bếp trưởng/quản lý thấy tất cả.
   const allQuery = useGetAllOrderForKitchenQuery(undefined, { skip: isChef });
   const myQuery = useGetMyKitchenItemsQuery(undefined, { skip: !isChef });
   const { data, isLoading, refetch } = isChef ? myQuery : allQuery;
-  const [updateOrderItem] = useUpdateOrderStatusMutation();
+  const [updateOrderItem, { isLoading: isUpdating }] =
+    useUpdateOrderStatusMutation();
 
   useEffect(() => {
     socket.on("tableStatusChanged", (data) => {
@@ -114,18 +116,45 @@ const ReceiveListFood = () => {
       <div className="h-16 flex w-full items-center px-10 bg-gradient-to-r from-primary-100 to-primary-400">
         <h3 className="text-white font-bold text-xl">{t("chef.allDishes")}</h3>
         <div className="ml-auto flex gap-2">
-          <button
-            onClick={() => setIsPending("PENDING")}
-            className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none transition transform hover:scale-105 active:bg-yellow-700 border "
-          >
-            {t("chef.pendingFilter")}
-          </button>
-          <button
-            onClick={() => setIsPending("PROCESSING")}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none transition transform hover:scale-105 active:bg-green-700 border "
-          >
-            {t("chef.cookingFilter")}
-          </button>
+          {isChef ? (
+            <>
+              <button
+                onClick={() => setTab(STATUS.PROCESSING)}
+                className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none transition transform hover:scale-105 active:bg-blue-700 border ${
+                  tab === STATUS.PROCESSING ? "ring-2 ring-white" : ""
+                }`}
+              >
+                {t("chef.tabInProgress")}
+              </button>
+              <button
+                onClick={() => setTab(STATUS.COOKING)}
+                className={`px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none transition transform hover:scale-105 active:bg-green-700 border ${
+                  tab === STATUS.COOKING ? "ring-2 ring-white" : ""
+                }`}
+              >
+                {t("chef.tabCooking")}
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setTab(STATUS.PENDING)}
+                className={`px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none transition transform hover:scale-105 active:bg-yellow-700 border ${
+                  tab === STATUS.PENDING ? "ring-2 ring-white" : ""
+                }`}
+              >
+                {t("chef.pendingFilter")}
+              </button>
+              <button
+                onClick={() => setTab(STATUS.PROCESSING)}
+                className={`px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none transition transform hover:scale-105 active:bg-green-700 border ${
+                  tab === STATUS.PROCESSING ? "ring-2 ring-white" : ""
+                }`}
+              >
+                {t("chef.cookingFilter")}
+              </button>
+            </>
+          )}
         </div>
       </div>
       <div className="p-6 mr-3 overflow-y-auto h-[75vh]">
@@ -157,7 +186,13 @@ const ReceiveListFood = () => {
           </TableHeader>
           <TableBody>
             {data?.result
-              .filter((order) => order.status === isPenđing)
+              .filter((order) =>
+                // chef_head: tab "đang chế biến" gộp cả PROCESSING và COOKING
+                !isChef && tab === STATUS.PROCESSING
+                  ? order.status === STATUS.PROCESSING ||
+                    order.status === STATUS.COOKING
+                  : order.status === tab
+              )
               .map((order, index) => (
                 <TableRow key={index} className="font-medium">
                   <TableCell className="p-2 text-center">{index + 1}</TableCell>
@@ -171,12 +206,14 @@ const ReceiveListFood = () => {
                     {new Date(order.updatedAt).toLocaleString().split(",")[1]}
                   </TableCell>
                   <TableCell className="p-2 text-center">
-                    {order.status === "PENDING" ? (
+                    {order.status === STATUS.PENDING ? (
                       <span className="text-yellow-500">{t("status.waiting")}</span>
-                    ) : order.status === "PROCESSING" ? (
-                      <span className="text-green-700">{t("status.processing")}</span>
+                    ) : order.status === STATUS.PROCESSING ? (
+                      <span className="text-blue-600">{t("status.inProgress")}</span>
+                    ) : order.status === STATUS.COOKING ? (
+                      <span className="text-green-700">{t("status.cooking")}</span>
                     ) : (
-                      <span className="text-blue-600">{t("status.completed")}</span>
+                      <span className="text-slate-500">{t("status.completed")}</span>
                     )}
                   </TableCell>
                   {!isChef && (
@@ -199,31 +236,33 @@ const ReceiveListFood = () => {
                         {t("chef.viewTable")}
                       </button>
                       {isChef ? (
-                        isPenđing === STATUS.PENDING ? (
+                        tab === STATUS.PROCESSING ? (
                           <button
+                            disabled={isUpdating}
                             onClick={() =>
-                              handleUpdateOrderStatus(STATUS.PROCESSING, [
+                              handleUpdateOrderStatus(STATUS.COOKING, [
                                 order.orderItemId,
                               ])
                             }
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
                           >
-                            {t("chef.startCooking")}
+                            {isUpdating ? t("common.processing") : t("chef.startCooking")}
                           </button>
                         ) : (
                           <button
+                            disabled={isUpdating}
                             onClick={() =>
                               handleUpdateOrderStatus(STATUS.COMPLETED, [
                                 order.orderItemId,
                               ])
                             }
-                            className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
+                            className="bg-green-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
                           >
-                            {t("common.complete")}
+                            {isUpdating ? t("common.processing") : t("common.complete")}
                           </button>
                         )
                       ) : (
-                        isPenđing === STATUS.PENDING && (
+                        tab === STATUS.PENDING && (
                           <button
                             onClick={() => handleModalAllChef(order)}
                             className="bg-primary-100 hover:bg-yellow-600 text-white px-3 py-1 rounded-xl whitespace-nowrap"
