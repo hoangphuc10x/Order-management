@@ -84,7 +84,13 @@ const RegisterUser: React.FC = () => {
         fulname: formData.fullName,
         role: "guest",
       }).unwrap();
-      dispatch(login({ accessToken: res.accessToken, userInfo: res.user }));
+      dispatch(
+        login({
+          accessToken: res.accessToken,
+          userInfo: res.user,
+          refreshToken: res.refreshToken,
+        })
+      );
       toast.success(t("auth.loginSuccess"));
       navigate("/menu");
     } catch (error) {

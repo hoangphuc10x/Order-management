@@ -7,6 +7,7 @@ const initialState: { tableInfo: Table } = {
     tableNumber: "",
     qrCode: "",
     status: "AVAILABLE",
+    inform: false,
     slug: "",
   },
 };

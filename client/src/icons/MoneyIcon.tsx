@@ -1,5 +1,3 @@
-import React from "react";
-
 const MoneyIcon = ({ fill = "black" }) => {
   return (
     <svg
